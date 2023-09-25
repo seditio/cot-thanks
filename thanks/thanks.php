@@ -9,52 +9,50 @@ Hooks=standalone
  * Thanks main script
  *
  * @package thanks
- * @version 1.2
- * @author Trustmaster
- * @copyright Copyright (c) Vladimir Sibirov 2011-2012
+ * @version 2.00b
+ * @author Trustmaster & Dmitri Beliavski
+ * @copyright Copyright (c) Vladimir Sibirov, Dmitri Beliavski 2011-2023
  * @license BSD
  */
 
 defined('COT_CODE') or die('Wrong URL');
 
+include_once cot_incfile('thanks', 'plug', 'api');
+
+$out['subtitle'] = $L['thanks_meta_title'];
+$out['desc'] = $L['thanks_meta_desc'];
+
 $ext = cot_import('ext', 'G', 'ALP');
 $item = cot_import('item', 'G', 'INT');
 $user = cot_import('user', 'G', 'INT');
 
-if ($a == 'thank' && !empty($ext) && $item > 0)
-{
-	if ($ext == 'page')
-	{
+$is_backend = false;
+
+// Условие для благодарности выполнено
+if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
+	// Получаем ID владельца страницы, постера или комментатора
+	if ($ext == 'page') {
 		require_once cot_incfile('page', 'module');
 		$res = $db->query("SELECT page_ownerid FROM $db_pages WHERE page_id = $item");
-	}
-	else if ($ext == 'forums')
-	{
+	} elseif ($ext == 'forums') {
 		require_once cot_incfile('forums', 'module');
 		$res = $db->query("SELECT fp_posterid FROM $db_forum_posts WHERE fp_id = $item");
-	}
-	elseif ($ext == 'comments')
-	{
+	} elseif ($ext == 'comments') {
 		require_once cot_incfile('comments', 'plug');
 		$res = $db->query("SELECT com_authorid FROM $db_com WHERE com_id = $item");
-	}
-	else
-	{
+	} else {
 		$res = false;
 	}
-	if ($res && $res->rowCount() == 1 && $usr['auth_write'])
-	{
+	// Присваиваем переменной $user значение ID
+	if ($res && $res->rowCount() == 1 && $usr['auth_write']) {
 		$user = $res->fetchColumn();
-	}
-	else
-	{
-		$ext['status'] = '400 Bad Request';
+	} else {
+		// $ext['status'] = '400 Bad Request';
 		cot_die();
 	}
-
+	// Проверяем, разрешена ли данная благодарность
 	$status = thanks_check($user, $usr['id'], $ext, $item);
-	switch ($status)
-	{
+	switch ($status) {
 		case THANKS_ERR_MAXDAY:
 			header('403 Forbidden');
 			cot_error('thanks_err_maxday');
@@ -67,132 +65,37 @@ if ($a == 'thank' && !empty($ext) && $item > 0)
 			header('403 Forbidden');
 			cot_error('thanks_err_item');
 			break;
+		// Все в порядке
 		case THANKS_ERR_NONE:
 			thanks_add($user, $usr['id'], $ext, $item);
 			cot_message('thanks_done');
 			break;
 	}
-	$t = new XTemplate(cot_tplfile('thanks.add', 'plug'));
-	$t->assign(array(
-		'THANKS_BACK_URL' => $_SERVER['HTTP_REFERER']
-	));
-//	cot_display_messages($t);
-	cot_redirect($_SERVER['HTTP_REFERER']);
-}
-elseif ($user > 0)
-{
-	// List all user's thanks here
-	require_once cot_incfile('page', 'module');
-	require_once cot_incfile('forums', 'module');
-	if (cot_plugin_active('comments'))
-	{
-		require_once cot_incfile('comments', 'plug');
-		$thanks_join_columns = ", com.*, pag2.page_alias AS p2_alias, pag2.page_id AS p2_id, pag2.page_cat AS p2_cat, pag2.page_title AS p2_title";
-		$thanks_join_tables = "LEFT JOIN $db_com AS com ON t.th_ext = 'comments' AND t.th_item = com.com_id
-			LEFT JOIN $db_pages AS pag2 ON com.com_area = 'page' AND com.com_code = pag2.page_id";
-	}
-
-	list($pg_thanks, $d_thanks, $durl_thanks) = cot_import_pagenav('d', $cfg['plugin']['thanks']['maxrowsperpage']);
-
-	$totalitems = $db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_touser = $user")->fetchColumn();
-
-	$res = $db->query("SELECT t.*, pag.page_alias, pag.page_title, pag.page_cat, ft.ft_title, p.fp_cat, u.user_name $thanks_join_columns
-		FROM $db_thanks AS t
-			LEFT JOIN $db_users AS u ON t.th_fromuser = u.user_id
-			LEFT JOIN $db_pages AS pag ON t.th_ext = 'page' AND t.th_item = pag.page_id
-			LEFT JOIN $db_forum_posts AS p ON t.th_ext = 'forums' AND t.th_item = p.fp_id
-				LEFT JOIN $db_forum_topics AS ft ON p.fp_id > 0 AND p.fp_topicid = ft.ft_id
-			$thanks_join_tables
-		WHERE th_touser = $user
-		ORDER BY th_date DESC
-		LIMIT $d_thanks, {$cfg['plugin']['thanks']['maxrowsperpage']}");
-	foreach ($res->fetchAll() as $row)
-	{
+	// В зависимости от настройки, откроем страницу с сообщением или сразу перенаправим на исходную
+	if (Cot::$cfg['plugin']['thanks']['page_on_result']) {
+		$t = new XTemplate(cot_tplfile('thanks.done', 'plug'));
 		$t->assign(array(
-				'THANKS_ROW_ID' => $row['th_id'],
-				'THANKS_ROW_DATE' => cot_date('datetime_medium', cot_date2stamp($row['th_date'], 'Y-m-d H:i:s')),
-				'THANKS_ROW_FROM_URL' => cot_url('users', 'm=details&id='.$row['th_fromuser'].'&u='.urlencode($row['user_name'])),
-				'THANKS_ROW_FROM_NAME' => htmlspecialchars($row['user_name'])
-			));
-		if (!empty($row['com_author']))
-		{
-			$urlp = empty($row['p2_alias']) ? array('c' => $row['p2_cat'], 'id' => $row['p2_id']) : array('c' => $row['p2_cat'], 'al' => $row['p2_alias']);
-			$t->assign(array(
-				'THANKS_ROW_URL' => cot_url($row['com_area'], $urlp, '#c' . $row['th_item']),
-				'THANKS_ROW_CAT_TITLE' => htmlspecialchars($structure['page'][$row['p2_cat']]['title']),
-				'THANKS_ROW_CAT_URL' => cot_url('page', 'c='.$row['p2_cat']),
-				'THANKS_ROW_TITLE' => $L['comments_comment'] . ': ' . htmlspecialchars($row['p2_title'])
-			));
-		}
-		elseif (!empty($row['page_title']))
-		{
-			// For a page
-			$t->assign(array(
-				'THANKS_ROW_URL' => empty($row['page_alias']) ? cot_url('page', 'c='.$row['page_cat'].'&id='.$row['th_item']) : cot_url('page', 'c='.$row['page_cat'].'&al='.$row['page_alias']),
-				'THANKS_ROW_CAT_TITLE' => htmlspecialchars($structure['page'][$row['page_cat']]['title']),
-				'THANKS_ROW_CAT_URL' => cot_url('page', 'c='.$row['page_cat']),
-				'THANKS_ROW_TITLE' => htmlspecialchars($row['page_title'])
-			));
-		}
-		elseif (!empty($row['ft_title']))
-		{
-			// For a page
-			$t->assign(array(
-				'THANKS_ROW_URL' => cot_url('forums', 'm=posts&id='.$row['th_item']),
-				'THANKS_ROW_CAT_TITLE' => htmlspecialchars($structure['forums'][$row['fp_cat']]['title']),
-				'THANKS_ROW_CAT_URL' => cot_url('forums', 'm=topics&s='.$row['fp_cat']),
-				'THANKS_ROW_TITLE' => htmlspecialchars($row['ft_title'])
-			));
-		}
-		$t->parse('MAIN.THANKS_ROW');
-	}
-
-	$name = $user == $usr['id'] ?  $usr['name'] : $db->query("SELECT user_name FROM $db_users WHERE user_id = $user")->fetchColumn();
-
-	$t->assign(array(
-		'THANKS_USER_NAME' => htmlspecialchars($name),
-		'THANKS_USER_URL' => cot_url('users', 'm=details&id='.$user.'&u='.$name)
-	));
-
-	$pagenav = cot_pagenav('plug','e=thanks&user='.$user, $db_thanks, $totalitems, $cfg['plugin']['thanks']['maxrowsperpage']);
-	$t->assign(array(
-		'PAGEPREV' => $pagenav['prev'],
-		'PAGENEXT' => $pagenav['next'],
-		'PAGENAV' => $pagenav['main']
-	));
-}
-else
-{
-	// Top thanked users
-	list($pg_thanks, $d_thanks, $durl_thanks) = cot_import_pagenav('d', $cfg['plugin']['thanks']['maxrowsperpage']);
-
-	$t = new XTemplate(cot_tplfile('thanks.top', 'plug'));
-
-	$totalitems = $db->query("SELECT COUNT(*) FROM $db_users")->fetchColumn();
-
-	$res = $db->query("SELECT u.*, (SELECT COUNT(*) FROM $db_thanks AS t WHERE t.th_touser = u.user_id) AS th_count
-		FROM $db_users AS u
-		ORDER BY th_count DESC
-		LIMIT $d_thanks, {$cfg['plugin']['thanks']['maxrowsperpage']}");
-	$num = $d + 1;
-	foreach ($res->fetchAll() as $row)
-	{
-		$t->assign(cot_generate_usertags($row, 'THANKS_ROW_'));
-		$t->assign(array(
-			'THANKS_ROW_NUM' => $num,
-			'THANKS_ROW_TOTALCOUNT' => $row['th_count'],
-			'THANKS_ROW_URL' => cot_url('plug', 'e=thanks&user='.$row['user_id'])
+			'THANKS_BACK_URL' => $_SERVER['HTTP_REFERER']
 		));
-		$t->parse('MAIN.THANKS_ROW');
-		$num++;
+		cot_display_messages($t);
+	} else {
+		cot_redirect($_SERVER['HTTP_REFERER']);
 	}
-
-	$pagenav = cot_pagenav('plug','e=thanks', $db_thanks, $totalitems, $cfg['plugin']['thanks']['maxrowsperpage']);
+} elseif ($a == 'viewdetails') {
+	$t = new XTemplate(cot_tplfile('thanks', 'plug'));
+	$crumbs[] = array(cot_url('thanks'), Cot::$L['thanks_title_short']);
+	$crumbs[] = Cot::$db->query("SELECT user_name FROM $db_users WHERE user_id = $user")->fetchColumn();
 	$t->assign(array(
-		'PAGEPREV' => $pagenav['prev'],
-		'PAGENEXT' => $pagenav['next'],
-		'PAGENAV' => $pagenav['main']
+  	'THANKS_TITLE' => $L['thanks_title_user'],
+  	'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
+		'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['thanksperpage'], '', '', $user, 'page'),
+	));
+} elseif (!$a) {
+	$t = new XTemplate(cot_tplfile('thanks', 'plug'));
+	$crumbs[] = Cot::$L['thanks_title_short'];
+	$t->assign(array(
+  	'THANKS_TITLE' => $L['thanks_title'],
+  	'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
+  	'THANKS_LIST' => thanks_render_list('thanks.list', Cot::$cfg['plugin']['thanks']['usersperpage'], '', '', '', 'page'),
 	));
 }
-
-?>

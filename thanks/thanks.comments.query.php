@@ -9,28 +9,30 @@ Hooks=comments.query
  * Thanks comments query
  *
  * @package thanks
- * @version 1.2
- * @author Trustmaster
- * @copyright Copyright (c) Vladimir Sibirov 2011-2012
+ * @version 2.00b
+ * @author Trustmaster & Dmitri Beliavski
+ * @copyright Copyright (c) Vladimir Sibirov, Dmitri Beliavski 2011-2023
  * @license BSD
  */
 
 defined('COT_CODE') or die('Wrong URL');
 
-global $db_thanks;
+if (Cot::$cfg['plugin']['thanks']['comments_on']) {
 
-require_once cot_incfile('thanks', 'plug');
+	Cot::$db->registerTable('thanks');
+	$db_thanks = Cot::$db->thanks;
 
-$comments_join_columns .= ", (SELECT COUNT(*) FROM `$db_thanks` WHERE th_ext = 'comments' AND th_item = c.com_id) AS thanks_count";
+	require_once cot_incfile('thanks', 'plug');
 
-if ($usr['id'] > 0 && cot_auth('plug', 'thanks', 'W'))
-{
-	$comments_join_columns .= ", (SELECT COUNT(*) FROM `$db_thanks` WHERE `th_fromuser` = {$usr['id']} AND `th_touser` = c.com_authorid AND DATE(`th_date`) = DATE(NOW())) AS thanks_touser_today
-		, (SELECT COUNT(*) FROM `$db_thanks` WHERE `th_fromuser` = {$usr['id']} AND `th_ext` = 'comments' AND `th_item` = c.com_id) AS thanks_toitem";
+	$comments_join_columns .= ", (SELECT COUNT(*) FROM `$db_thanks` WHERE th_ext = 'comments' AND th_item = c.com_id) AS thanks_count";
+
+	if ($usr['id'] > 0 && cot_auth('plug', 'thanks', 'W')) {
+		$comments_join_columns .= ", (SELECT COUNT(*) FROM `$db_thanks` WHERE `th_fromuser` = {$usr['id']} AND `th_touser` = c.com_authorid AND DATE(`th_date`) = DATE(NOW())) AS thanks_touser_today
+			, (SELECT COUNT(*) FROM `$db_thanks` WHERE `th_fromuser` = {$usr['id']} AND `th_ext` = 'comments' AND `th_item` = c.com_id) AS thanks_toitem";
+	}
+
+	if (Cot::$cfg['plugin']['thanks']['comments_order']) {
+		$comments_order = "thanks_count DESC, " . $comments_order;
+	}
+	
 }
-
-if ($cfg['plugin']['comments']['comorder'])
-{
-	$comments_order = "thanks_count DESC, " . $comments_order;
-}
-

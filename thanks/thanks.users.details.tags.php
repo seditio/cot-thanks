@@ -1,6 +1,12 @@
 <?php
+/* ====================
+[BEGIN_COT_EXT]
+Hooks=users.details.tags
+[END_COT_EXT]
+==================== */
+
 /**
- * Thanks installation handler
+ * Thanks Users Details
  *
  * @package thanks
  * @version 2.00b
@@ -11,5 +17,4 @@
 
 defined('COT_CODE') or die('Wrong URL');
 
-$db_users = Cot::$db->users;
-Cot::$db->query("ALTER TABLE $db_users ADD COLUMN `user_thanks` INT NOT NULL DEFAULT 0");
+include_once cot_incfile('thanks', 'plug');

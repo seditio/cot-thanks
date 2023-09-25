@@ -1,11 +1,11 @@
 <?php
 /**
- * Thanks Dutch language file
+ * Thanks / NL Locale
  *
  * @package thanks
- * @version 1.0
- * @author Trustmaster
- * @copyright Copyright (c) Vladimir Sibirov 2011
+ * @version 2.00b
+ * @author Trustmaster & Dmitri Beliavski
+ * @copyright Copyright (c) Vladimir Sibirov, Dmitri Beliavski 2011-2023
  * @license BSD
  */
 
@@ -24,4 +24,3 @@ $L['thanks_thanked'] = 'Bedankt';
 $L['thanks_thanks'] = 'Bedankt!';
 $L['thanks_top'] = 'Top bedankt gebruikers';
 $L['thanks_tag'] = 'User says Thanks: ';
-

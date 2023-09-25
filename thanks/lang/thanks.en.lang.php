@@ -1,11 +1,11 @@
 <?php
 /**
- * Thanks English language file
+ * Thanks / EN Locale
  *
  * @package thanks
- * @version 1.0
- * @author Trustmaster
- * @copyright Copyright (c) Vladimir Sibirov 2011
+ * @version 2.00b
+ * @author Trustmaster & Dmitri Beliavski
+ * @copyright Copyright (c) Vladimir Sibirov, Dmitri Beliavski 2011-2023
  * @license BSD
  */
 
@@ -26,5 +26,3 @@ $L['thanks_thanked'] = 'Thanked';
 $L['thanks_thanks'] = 'Thank you!';
 $L['thanks_top'] = 'Top thanked users';
 $L['thanks_tag'] = 'User says Thanks: ';
-
-
