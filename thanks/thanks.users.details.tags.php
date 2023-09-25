@@ -18,3 +18,4 @@ Hooks=users.details.tags
 defined('COT_CODE') or die('Wrong URL');
 
 include_once cot_incfile('thanks', 'plug');
+include_once cot_incfile('thanks', 'plug', 'resources');

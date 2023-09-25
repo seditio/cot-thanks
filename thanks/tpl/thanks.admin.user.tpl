@@ -42,5 +42,8 @@
 		</ul>
 	</nav>
 	<!-- ENDIF -->
+	<a href="{PHP|cot_url('admin', 'm=other&p=thanks')}" class="btn btn-primary btn-sm mt-3">
+		{PHP.R.icon-hand-point-right}{PHP.L.thanks_title_short}
+	</a>
 </div>
 <!-- END: MAIN -->

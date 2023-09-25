@@ -66,17 +66,20 @@ function thanks_render_list($tpl = 'thanks.list', $items = 0, $order = '', $extr
 		// Compile order
 		$sql_order = empty($order) ? "ORDER BY th_count DESC" : " ORDER BY $order";
 
+		// Compile user_id
+		$sql_user = (empty($user)) ? "" : "user_id = " . $user;
+
 		// Compile extra SQL condition
 		$sql_extra = (empty($extra)) ? "" : $extra;
+
+		$sql_cond = sedby_twocond($sql_user, $sql_extra);
 
 		// Compile items number
 		$sql_limit = ($items > 0) ? "LIMIT $d, $items" : "";
 
 		// Non-zero var
-		$nz1 = $nz2 = "";
 		if (Cot::$cfg['plugin']['thanks']['nozero']) {
-			$nozero1 = "WHERE u.user_thanks > 0";
-			$nozero2 = "WHERE user_thanks > 0";
+			$sql_cond = (empty($sql_cond)) ? " WHERE u.user_thanks > 0 " : $sql_cond . " AND u.user_thanks > 0 ";
 		}
 
 		/* === Hook === */
@@ -88,7 +91,7 @@ function thanks_render_list($tpl = 'thanks.list', $items = 0, $order = '', $extr
 		$res = Cot::$db->query("SELECT u.*, (SELECT COUNT(*) FROM $db_thanks AS t WHERE t.th_touser = u.user_id) AS th_count
 			FROM $db_users
 			AS u
-			$nozero1 $sql_order $sql_limit");
+			$sql_cond $sql_order $sql_limit");
 		$jj = 0;
 
 		/* === Hook - Part 1 === */
@@ -120,7 +123,7 @@ function thanks_render_list($tpl = 'thanks.list', $items = 0, $order = '', $extr
 
 		// Render pagination if needed
 		if ($enablePagination) {
-			$totalitems = Cot::$db->query("SELECT COUNT(*) FROM $db_users $nozero2")->fetchColumn();
+			$totalitems = Cot::$db->query("SELECT COUNT(*) FROM $db_users AS u $sql_cond")->fetchColumn();
 
 			$url_area = sedby_geturlarea();
 			$url_params = sedby_geturlparams();
