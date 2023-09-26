@@ -43,7 +43,7 @@
 			<!-- END: PAGE_ROW -->
 			<!-- BEGIN: NONE -->
 			<tr class="text-center">
-				<td colspan="4">
+				<td colspan="5">
 					{PHP.L.thanks_none}
 				</td>
 			</tr>

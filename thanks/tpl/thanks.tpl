@@ -11,7 +11,9 @@
 					</p>
 				</div>
 				{FILE "{PHP.cfg.themes_dir}/{PHP.theme}/warnings.tpl"}
-				{THANKS_LIST}
+				<div id="thanks_ajax">
+					{THANKS_LIST}
+				</div>
 			</div>
 		</div>
 

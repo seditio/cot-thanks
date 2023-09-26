@@ -33,6 +33,13 @@
 				</td>
 			</tr>
 			<!-- END: PAGE_ROW -->
+			<!-- BEGIN: NONE -->
+			<tr class="text-center">
+				<td colspan="4">
+					{PHP.L.thanks_users_none}
+				</td>
+			</tr>
+			<!-- END: NONE -->
 		</tbody>
 	</table>
 	<!-- IF {PAGE_TOP_PAGINATION} -->

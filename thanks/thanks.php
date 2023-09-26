@@ -88,7 +88,7 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 	$t->assign(array(
   	'THANKS_TITLE' => $L['thanks_title_user'],
   	'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
-		'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['thanksperpage'], '', '', $user, 'page'),
+		'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['thanksperpage'], '', '', $user, 'page', ''),
 	));
 } elseif (!$a) {
 	$t = new XTemplate(cot_tplfile('thanks', 'plug'));
@@ -96,6 +96,6 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 	$t->assign(array(
   	'THANKS_TITLE' => $L['thanks_title'],
   	'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
-  	'THANKS_LIST' => thanks_render_list('thanks.list', Cot::$cfg['plugin']['thanks']['usersperpage'], '', '', '', 'page'),
+  	'THANKS_LIST' => thanks_render_list('thanks.list', Cot::$cfg['plugin']['thanks']['usersperpage'], '', '', '', 'page', ''),
 	));
 }
