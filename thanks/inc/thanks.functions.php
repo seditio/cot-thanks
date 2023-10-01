@@ -14,7 +14,7 @@ defined('COT_CODE') or die('Wrong URL');
 // define globals
 define('SEDBY_THANKS_REALM', '[SEDBY] Thanks');
 
-require_once cot_incfile('pagelist', 'plug', 'functions.extra');
+require_once cot_incfile('cotlib', 'plug');
 
 function thanks_render_list($tpl = 'thanks.list', $items = 0, $order = '', $extra = '', $user = '', $pagination = '', $ajax_block = '', $cache_name = '', $cache_ttl = 0) {
 
@@ -72,15 +72,15 @@ function thanks_render_list($tpl = 'thanks.list', $items = 0, $order = '', $extr
 		// Compile extra SQL condition
 		$sql_extra = (empty($extra)) ? "" : $extra;
 
-		$sql_cond = sedby_twocond($sql_user, $sql_extra);
-
 		// Compile items number
 		$sql_limit = ($items > 0) ? "LIMIT $d, $items" : "";
 
 		// Non-zero var
 		if (Cot::$cfg['plugin']['thanks']['nozero']) {
-			$sql_cond = (empty($sql_cond)) ? " WHERE u.user_thanks > 0 " : $sql_cond . " AND u.user_thanks > 0 ";
+		 	$sql_nozero = "u.user_thanks > 0";
 		}
+
+		$sql_cond = sedby_build_where(array($sql_user, $sql_extra, $sql_nozero));
 
 		/* === Hook === */
 		foreach (cot_getextplugins('thanks.list.query') as $pl) {
@@ -237,7 +237,7 @@ function thanks_render_user($tpl = 'thanks.user', $items = 0, $order = '', $extr
 		// Compile extra SQL condition
 		$sql_extra = (empty($extra)) ? "" : $extra;
 
-		$sql_cond = sedby_twocond($sql_user, $sql_extra);
+		$sql_cond = sedby_build_where(array($sql_user, $sql_extra));
 
 		// Compile items number
 		$sql_limit = ($items > 0) ? "LIMIT $d, $items" : "";
