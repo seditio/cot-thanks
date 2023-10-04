@@ -193,10 +193,10 @@ function thanks_count($area, $element_id) {
 		case 'page':
 			return Cot::$db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_ext = 'page' and th_item = ?", array($element_id))->fetchColumn();
 			break;
-		case 'post':
+		case 'forums':
 			return Cot::$db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_ext = 'forums' and th_item = ?", array($element_id))->fetchColumn();
 			break;
-		case 'comment':
+		case 'comments':
 			return Cot::$db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_ext = 'comments' and th_item = ?", array($element_id))->fetchColumn();
 			break;
 	}

@@ -71,9 +71,11 @@ if (Cot::$cfg['plugin']['thanks']['page_on']) {
 		}
 	}
 
+	$total = $db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_ext = 'page' AND th_item = $page_id")->fetchColumn();
+
 	$t->assign(array(
 		'PAGE_THANKFUL' => $L['thanks_tag'],
-		'PAGE_THANKS_COUNT' => $res->rowCount(),
+		'PAGE_THANKS_COUNT' => $total,
 	));
 
 	if ($cfg['plugin']['thanks']['short']) {

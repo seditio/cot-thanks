@@ -60,9 +60,11 @@ if (Cot::$cfg['plugin']['thanks']['comments_on']) {
 		}
 	}
 
+	$total = $db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_ext = 'comments' AND th_item = $item")->fetchColumn();
+
 	$t->assign(array(
 		'COMMENTS_ROW_THANKFUL' => $L['thanks_tag'],
-		'COMMENTS_ROW_THANKS_COUNT' => $res->rowCount(),
+		'COMMENTS_ROW_THANKS_COUNT' => $total,
 	));
 
 	if ($cfg['plugin']['thanks']['short']) {

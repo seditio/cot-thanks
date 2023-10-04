@@ -72,9 +72,11 @@ if (Cot::$cfg['plugin']['thanks']['forums_on']) {
 		}
 	}
 
+	$total = $db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_ext = 'forums' AND th_item = $fp_id")->fetchColumn();
+
 	$t->assign(array(
 		'FORUMS_POSTS_ROW_THANKFUL' => $L['thanks_tag'],
-		'FORUMS_POSTS_ROW_THANKS_COUNT' => $res->rowCount(),
+		'FORUMS_POSTS_ROW_THANKS_COUNT' => $total,
 	));
 
 	if ($cfg['plugin']['thanks']['short']) {
