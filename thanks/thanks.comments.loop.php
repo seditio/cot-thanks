@@ -62,7 +62,7 @@ if (Cot::$cfg['plugin']['thanks']['comments_on']) {
 
 	$t->assign(array(
 		'COMMENTS_ROW_THANKFUL' => $L['thanks_tag'],
-		'COMMENTS_ROW_THANKS' => $res->rowCount(),
+		'COMMENTS_ROW_THANKS_COUNT' => $res->rowCount(),
 	));
 
 	if ($cfg['plugin']['thanks']['short']) {

@@ -180,3 +180,24 @@ function thanks_user_thanks_count($user_id) {
 	$db_thanks = Cot::$db->thanks;
 	return Cot::$db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_touser = ?", array($user_id))->fetchColumn();
 }
+
+/**
+ * Returns number of thanks for an element (page, post or comment)
+ *
+ * @param int $user_id User ID
+ * @return int Number of thanks received by user
+ */
+function thanks_count($area, $element_id) {
+	$db_thanks = Cot::$db->thanks;
+	switch ($area) {
+		case 'page':
+			return Cot::$db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_ext = 'page' and th_item = ?", array($element_id))->fetchColumn();
+			break;
+		case 'post':
+			return Cot::$db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_ext = 'forums' and th_item = ?", array($element_id))->fetchColumn();
+			break;
+		case 'comment':
+			return Cot::$db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_ext = 'comments' and th_item = ?", array($element_id))->fetchColumn();
+			break;
+	}
+}

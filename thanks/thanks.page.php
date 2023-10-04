@@ -73,7 +73,7 @@ if (Cot::$cfg['plugin']['thanks']['page_on']) {
 
 	$t->assign(array(
 		'PAGE_THANKFUL' => $L['thanks_tag'],
-		'PAGE_THANKS' => $res->rowCount(),
+		'PAGE_THANKS_COUNT' => $res->rowCount(),
 	));
 
 	if ($cfg['plugin']['thanks']['short']) {

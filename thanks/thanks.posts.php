@@ -74,7 +74,7 @@ if (Cot::$cfg['plugin']['thanks']['forums_on']) {
 
 	$t->assign(array(
 		'FORUMS_POSTS_ROW_THANKFUL' => $L['thanks_tag'],
-		'FORUMS_POSTS_ROW_THANKS' => $res->rowCount(),
+		'FORUMS_POSTS_ROW_THANKS_COUNT' => $res->rowCount(),
 	));
 
 	if ($cfg['plugin']['thanks']['short']) {
