@@ -36,9 +36,9 @@ if (Cot::$cfg['plugin']['thanks']['comments_on']) {
 
 	$th_users_list = '';
 	$th_users_list_dates = '';
-	// Already thanked
+
 	$th_thanked = false;
-	// Checking if user is in the thanked list
+
 	foreach ($res as $rows) {
 		if ($cfg['plugin']['thanks']['short']) {
 		if (!empty($th_users_list)) {
@@ -60,13 +60,16 @@ if (Cot::$cfg['plugin']['thanks']['comments_on']) {
 		}
 	}
 
-	// Adding thanked users list to a comment
+	$t->assign(array(
+		'COMMENTS_ROW_THANKFUL' => $L['thanks_tag'],
+		'COMMENTS_ROW_THANKS' => $res->rowCount(),
+	));
+
 	if ($cfg['plugin']['thanks']['short']) {
 		$t->assign(array('COMMENTS_ROW_THANK_USERS' => $th_users_list));
 	} else {
 		$t->assign(array('COMMENTS_ROW_USERS_DATES' => $th_users_list_dates));
 	}
-	$t->assign(array('FORUMS_POSTS_ROW_THANKFUL' => $L['thanks_tag']));
 
 	// Fallback
 	$t->assign(array(

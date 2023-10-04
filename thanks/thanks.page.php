@@ -64,19 +64,23 @@ if (Cot::$cfg['plugin']['thanks']['page_on']) {
 			$th_users_list_dates .= ', ';
 		}
 		$th_users_list_dates .=	cot_rc_link(cot_url('users', 'm=details&id=' . $rows['th_fromuser'] . '&u=' . ($rows['user_name'])), $rows['user_name']);
-		$th_users_list_dates .= $R['open'] . cot_date('d-m-Y', cot_date2stamp($rows['th_date'])) . $R['close'];
+		$th_users_list_dates .= " " . $R['open'] . cot_date('d-m-Y', cot_date2stamp($rows['th_date'])) . $R['close'];
 			if ($th_thanked || $usr['id'] == $rows['th_fromuser']) {
 				$th_thanked = true;
 			}
 		}
 	}
 
+	$t->assign(array(
+		'PAGE_THANKFUL' => $L['thanks_tag'],
+		'PAGE_THANKS' => $res->rowCount(),
+	));
+
 	if ($cfg['plugin']['thanks']['short']) {
 		$t->assign('PAGE_THANK_USERS', $th_users_list);
 	} else {
 		$t->assign('PAGE_THANK_USERS_DATES', $th_users_list_dates);
 	}
-	$t->assign('FORUMS_POSTS_ROW_THANKFUL', $L['thanks_tag']);
 
 	if ($thanks_auth_write && !thanks_check_item($usr['id'], 'page', $id) && $usr['id'] != $pag['page_ownerid'] && !$th_thanked) {
 		$t->assign(array(
