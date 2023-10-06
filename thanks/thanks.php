@@ -109,19 +109,22 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 			// Better way maybe?
 			switch ($ext) {
 				case 'page':
-					$item_array = Cot::$db->query("SELECT page_id, page_alias, page_title, page_cat FROM $db_pages WHERE page_id = $item")->fetch();
+					$item_array = Cot::$db->query("SELECT page_title FROM $db_pages WHERE page_id = $item")->fetch();
 					$item_name			= $item_array['page_title'];
 					$item_name_full = Cot::$L['Page'] . " " . $R['thanks_quote_open'] . $item_array['page_title'] . $R['thanks_quote_close'];
-					$item_back_url	= cot_page_url($item_array);
+					$item_back_url	= $_SERVER['HTTP_REFERER'];
 					break;
 				case 'forums':
 					$item_array = Cot::$db->query("SELECT fp_id, fp_topicid FROM $db_forum_posts WHERE fp_id = $item")->fetch();
 					$item_name			= $item_array['fp_id'];
 					$item_name_full = Cot::$L['forums_post'] . " " . $R['thanks_quote_open'] . $item_array['fp_id'] . $R['thanks_quote_close'];
-					$item_back_url = cot_url('forums', 'm=posts&q=' . $item_array['fp_topicid']);
+					$item_back_url = $_SERVER['HTTP_REFERER'];
 					break;
 				case 'comments':
-					$item_name = Cot::$L['Comment'] . " \"" . Cot::$db->query("SELECT page_title FROM $db_pages WHERE page_id = $item")->fetchColumn() . "\"";
+					$item_array = Cot::$db->query("SELECT com_id, com_code, com_area FROM $db_com WHERE com_id = $item")->fetch();
+					$item_name	= $item_array['com_id'];
+					$item_name_full = Cot::$L['comments_comment'] . " " . $R['thanks_quote_open'] . $item_array['com_id'] . $R['thanks_quote_close'];
+					$item_back_url = $_SERVER['HTTP_REFERER'];
 					break;
 			}
 			// till here

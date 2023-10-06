@@ -49,11 +49,11 @@ if (Cot::$cfg['plugin']['thanks']['comments_on']) {
 	$th_users_list = '';
 	$th_thanked = false;
 
-	foreach ($res as $row) {
+	foreach ($res as $t_row) {
 		(!empty($th_users_list)) && $th_users_list .= $R['thanks_divider'];
-		$th_users_list .= cot_rc_link(cot_url('users', 'm=details&id=' . $row['th_fromuser'] . '&u=' . ($row['user_name'])), $row['user_name']);
-		(!$cfg['plugin']['thanks']['short']) && $th_users_list .= $R['thanks_bracket_open'] . cot_date('date_full', $row['th_date']) . $R['thanks_bracket_close'];
-		($th_thanked || $usr['id'] == $row['th_fromuser']) && $th_thanked = true;
+		$th_users_list .= cot_rc_link(cot_url('users', 'm=details&id=' . $t_row['th_fromuser'] . '&u=' . ($t_row['user_name'])), $t_row['user_name']);
+		(!$cfg['plugin']['thanks']['short']) && $th_users_list .= $R['thanks_bracket_open'] . cot_date('date_full', $t_row['th_date']) . $R['thanks_bracket_close'];
+		($th_thanked || $usr['id'] == $t_row['th_fromuser']) && $th_thanked = true;
 	}
 
 	$t->assign(array(
