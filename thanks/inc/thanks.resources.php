@@ -12,15 +12,15 @@
 
 defined('COT_CODE') or die('Wrong URL');
 
-$R['thanks_bracket_open'] = '(';
+$R['thanks_divider'] = ', ';
+
+$R['thanks_bracket_open'] = ' (';
 $R['thanks_bracket_close'] = ')';
 
 $R['thanks_quote_open'] = '&laquo;';
 $R['thanks_quote_close'] = '&raquo;';
 
 $R['thanks_class_list'] = '';
-
-// $R['thanks_delete'] = '<a href="{$link}" class="btn btn-sm btn-danger confirmLink">' . $R['icon-trash'] . $L['Delete'] . '</a>';
 
 if (cot_plugin_active('icons')) {
   $R['more_back']   = '<a href="{$link}" class="btn btn-sm btn-secondary">' . $R['icon-arrow-right'] . '<span>' . $L['ReadMore'] . '</span></a>';
@@ -29,6 +29,5 @@ if (cot_plugin_active('icons')) {
   $R['more_back']   = '<a href="{$link}" class="btn btn-sm btn-secondary"> >> <span>' . $L['ReadMore'] . '</span></a>';
   $R['delete_back']   = '<a href="{$link}" class="btn btn-sm btn-danger confirmLink"> x <span>' . $L['Delete'] . '</span></a>';
 }
-
 
 $R['more_front']   = '<a href="{$link}" class="{$class}">' . $L['More'] . '</a>';
