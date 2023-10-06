@@ -71,7 +71,7 @@ $L['thanks_title'] = 'Благодарности пользователям';
 $L['thanks_title_short'] = 'Благодарности';
 $L['thanks_title_user'] = 'Благодарности пользователю';
 $L['thanks_title_page'] = 'Лайки странице';
-$L['thanks_title_forums'] = 'Лайки посту';
+$L['thanks_title_forums'] = 'Лайки сообщению';
 $L['thanks_title_comments'] = 'Лайки комментарию';
 
 $L['thanks_thanked'] = 'Поблагодарили';

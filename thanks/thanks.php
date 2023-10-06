@@ -110,11 +110,15 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 			switch ($ext) {
 				case 'page':
 					$item_array = Cot::$db->query("SELECT page_id, page_alias, page_title, page_cat FROM $db_pages WHERE page_id = $item")->fetch();
+					$item_name			= $item_array['page_title'];
 					$item_name_full = Cot::$L['Page'] . " " . $R['thanks_quote_open'] . $item_array['page_title'] . $R['thanks_quote_close'];
-					$item_back_url = cot_page_url($item_array);
+					$item_back_url	= cot_page_url($item_array);
 					break;
 				case 'forums':
-					$item_name = Cot::$L['Post'] . " \"" . Cot::$db->query("SELECT page_title FROM $db_pages WHERE page_id = $item")->fetchColumn() . "\"";
+					$item_array = Cot::$db->query("SELECT fp_id, fp_topicid FROM $db_forum_posts WHERE fp_id = $item")->fetch();
+					$item_name			= $item_array['fp_id'];
+					$item_name_full = Cot::$L['forums_post'] . " " . $R['thanks_quote_open'] . $item_array['fp_id'] . $R['thanks_quote_close'];
+					$item_back_url = cot_url('forums', 'm=posts&q=' . $item_array['fp_topicid']);
 					break;
 				case 'comments':
 					$item_name = Cot::$L['Comment'] . " \"" . Cot::$db->query("SELECT page_title FROM $db_pages WHERE page_id = $item")->fetchColumn() . "\"";
@@ -125,7 +129,7 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 			$crumbs[] = array(cot_url('thanks'), Cot::$L['thanks_title_short']);
 			$crumbs[] = $item_name_full;
 			$t->assign(array(
-				'THANKS_TITLE' => $L['thanks_title_' . $ext] . " " . $R['thanks_quote_open'] . $item_array['page_title'] . $R['thanks_quote_close'],
+				'THANKS_TITLE' => $L['thanks_title_' . $ext] . " " . $R['thanks_quote_open'] . $item_name . $R['thanks_quote_close'],
 				'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
 				'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['thanksperpage'], '', 'th_ext = "' . $ext . '" and th_item = ' . $item, '', 'page'),
 				'THANKS_BACK' => $item_back_url,
