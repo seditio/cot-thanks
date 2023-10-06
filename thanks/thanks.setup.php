@@ -25,15 +25,17 @@ Recommends_plugins=comments
 limits=00:separator:::
 maxday=01:string::10:Max thanks a user can give a day
 maxuser=02:string::5:Max thanks a day a user can give to a particular user
+maxthanked=03:string::10:Max number of users that thanked for an item
 
 pagination=10:separator:::
 usersperpage=11:string::20:Max users per page
-thanksperpage=12:string::20:Max thanks per page
-ajax=13:radio::0:Use ajax
-encrypt_ajax_urls=14:radio::0:Encrypt ajax URLs
-encrypt_key=15:string::1234567890123456:Secret Key
-encrypt_iv=16:string::1234567890123456:Initialization Vector
-nozero=17:radio::1:No zero-thanked users in the list
+nozero=12:radio::1:No zero-thanked users in the list
+thanksperpage=13:string::20:Max thanks per page
+ajax=14:radio::0:Use ajax
+encrypt_ajax_urls=15:radio::0:Encrypt ajax URLs
+encrypt_key=16:string::1234567890123456:Secret Key
+encrypt_iv=17:string::1234567890123456:Initialization Vector
+
 
 page=20:separator:::
 page_on=21:radio::1:Turn on thanks for pages

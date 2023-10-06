@@ -25,5 +25,5 @@ if (!$th_lang_loaded) {
 }
 
 $temp_array['THANKS'] = $user_data['user_thanks'];
-$temp_array['THANKS_URL'] = cot_url('thanks', 'user=' . $user_data['user_id']);
+$temp_array['THANKS_URL'] = cot_url('thanks', 'a=viewdetails&user=' . $user_data['user_id']);
 $temp_array['THANKS_TIMES'] = cot_declension($user_data['user_thanks'], 'Times');

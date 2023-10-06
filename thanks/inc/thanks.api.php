@@ -184,20 +184,37 @@ function thanks_user_thanks_count($user_id) {
 /**
  * Returns number of thanks for an element (page, post or comment)
  *
- * @param int $user_id User ID
- * @return int Number of thanks received by user
+ * @param string $area Area (extension)
+ * @param int    $element_id Element ID
+ * @return int   Number of thanks
  */
-function thanks_count($area, $element_id) {
+function thanks_count($ext, $item) {
 	$db_thanks = Cot::$db->thanks;
-	switch ($area) {
+	switch ($ext) {
 		case 'page':
-			return Cot::$db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_ext = 'page' and th_item = ?", array($element_id))->fetchColumn();
+			return Cot::$db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_ext = 'page' and th_item = ?", array($item))->fetchColumn();
 			break;
 		case 'forums':
-			return Cot::$db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_ext = 'forums' and th_item = ?", array($element_id))->fetchColumn();
+			return Cot::$db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_ext = 'forums' and th_item = ?", array($item))->fetchColumn();
 			break;
 		case 'comments':
-			return Cot::$db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_ext = 'comments' and th_item = ?", array($element_id))->fetchColumn();
+			return Cot::$db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_ext = 'comments' and th_item = ?", array($item))->fetchColumn();
 			break;
 	}
+}
+
+/**
+ * Gets number of likes for the element
+ *
+ * @param string $area Area (extension)
+ * @param int    $element_id Element ID
+ * @return int   Number of likes
+ */
+function thanks_get_number($ext, $item) {
+	return Cot::$db->query("SELECT COUNT(*) FROM " . Cot::$db->thanks . " WHERE th_ext = ? AND th_item = ?", array($ext, $item))->fetchColumn();
+}
+
+function thanks_wrong_parameter() {
+	cot_message('thanks_err_wrong_parameter', 'error');
+	cot_redirect(cot_url('thanks'));
 }

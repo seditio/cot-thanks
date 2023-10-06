@@ -12,8 +12,13 @@
 
 defined('COT_CODE') or die('Wrong URL');
 
-$R['open'] = '[';
-$R['close'] = ']';
+$R['thanks_bracket_open'] = '(';
+$R['thanks_bracket_close'] = ')';
+
+$R['thanks_quote_open'] = '&laquo;';
+$R['thanks_quote_close'] = '&raquo;';
+
+$R['thanks_class_list'] = '';
 
 // $R['thanks_delete'] = '<a href="{$link}" class="btn btn-sm btn-danger confirmLink">' . $R['icon-trash'] . $L['Delete'] . '</a>';
 
