@@ -58,21 +58,21 @@ if (Cot::$cfg['plugin']['thanks']['page_on']) {
 	}
 
 	$t->assign(array(
-		'PAGE_THANKS_COUNT' => thanks_get_number('page', $page_id),
-		'PAGE_THANKS_URL' => cot_url('thanks', 'a=viewdetails&ext=page&item=' . $page_id),
-		'PAGE_THANKS_USERS' => $th_users_list,
+		'PAGE_THANKS_COUNT'    => thanks_get_number('page', $page_id),
+		'PAGE_THANKS_LIST_URL' => cot_url('thanks', 'a=viewdetails&ext=page&item=' . $page_id),
+		'PAGE_THANKS_USERS'    => $th_users_list,
 	));
 
 	if ($thanks_auth_write && !thanks_check_item($usr['id'], 'page', $id) && $usr['id'] != $pag['page_ownerid'] && !$th_thanked) {
 		$thanks_url = cot_url('thanks', 'a=thank&ext=page&item=' . $id);
 		$t->assign(array(
-			'PAGE_THANK_CAN' => true,
-			'PAGE_THANK_URL' => $thanks_url,
-			'PAGE_THANK_LINK' => cot_rc_link($thanks_url, $L['thanks_thanks'], array('class' => Cot::$cfg['plugin']['thanks']['page_class'])),
+			'PAGE_THANKS_CAN'  => true,
+			'PAGE_THANKS_URL'  => $thanks_url,
+			'PAGE_THANKS_LINK' => cot_rc_link($thanks_url, $L['thanks_thanks'], array('class' => Cot::$cfg['plugin']['thanks']['page_class'])),
 		));
 	} else {
 		$t->assign(array(
-			'PAGE_THANK_CAN' => false,
+			'PAGE_THANKS_CAN' => false,
 		));
 	}
 }
