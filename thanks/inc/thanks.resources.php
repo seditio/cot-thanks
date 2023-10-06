@@ -12,6 +12,10 @@
 
 defined('COT_CODE') or die('Wrong URL');
 
+// Temporary
+$R['open'] = '(';
+$R['close'] = ')';
+
 $R['thanks_divider'] = ', ';
 
 $R['thanks_bracket_open'] = ' (';

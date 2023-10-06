@@ -22,8 +22,6 @@ if (Cot::$cfg['plugin']['thanks']['comments_on']) {
 	Cot::$db->registerTable('thanks');
 	$db_thanks = Cot::$db->thanks;
 
-	require_once cot_incfile('thanks', 'plug');
-
 	$comments_join_columns .= ", (SELECT COUNT(*) FROM `$db_thanks` WHERE th_ext = 'comments' AND th_item = c.com_id) AS thanks_count";
 
 	if ($usr['id'] > 0 && cot_auth('plug', 'thanks', 'W')) {
@@ -34,5 +32,5 @@ if (Cot::$cfg['plugin']['thanks']['comments_on']) {
 	if (Cot::$cfg['plugin']['thanks']['comments_order']) {
 		$comments_order = "thanks_count DESC, " . $comments_order;
 	}
-	
+
 }

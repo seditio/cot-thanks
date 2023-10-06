@@ -274,10 +274,10 @@ function thanks_render_user($tpl = 'thanks.user', $items = 0, $order = '', $extr
 				'PAGE_ROW_DATE_STAMP'	=> $row['th_date'],
 
 				'PAGE_ROW_TO_NAME'		=> htmlspecialchars($row['to_name']),
-				'PAGE_ROW_FROM_NAME'	=> htmlspecialchars($row['from_name']),
-
 				'PAGE_ROW_TO_URL'			=> cot_url('users', 'm=details&id=' . $row['th_touser'] . '&u=' . urlencode($row['to_name'])),
-				'PAGE_ROW_FROM_URL'		=> cot_url('users', 'm=details&id=' . $row['th_fromuser'] . '&u=' . urlencode($row['from_name'])),
+
+				'PAGE_ROW_FROM_NAME'	=> sedby_user_exists($row['th_fromuser']) ? htmlspecialchars($row['from_name']) : "",
+				'PAGE_ROW_FROM_URL'		=> sedby_user_exists($row['th_fromuser']) ? cot_url('users', 'm=details&id=' . $row['th_fromuser'] . '&u=' . urlencode($row['from_name'])) : "",
 
 				'PAGE_ROW_DELETE'			=> cot_rc('delete_back', array('link' => cot_confirm_url(cot_url('admin', 'm=other&p=thanks&a=remove&user=' . $user . '&item=' . $row['th_id'], '', true), 'thanks', 'thanks_remove_one'))),
 			));

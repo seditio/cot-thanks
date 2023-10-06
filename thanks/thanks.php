@@ -98,7 +98,7 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 			$t->assign(array(
 		  	'THANKS_TITLE' => $L['thanks_title_user'],
 		  	'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
-				'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['thanksperpage'], '', '', $user, 'page', ''),
+				'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['thanksperpage'], '', '', $user, 'page'),
 			));
 		} else {
 			thanks_wrong_parameter();
@@ -127,7 +127,7 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 			$t->assign(array(
 				'THANKS_TITLE' => $L['thanks_title_' . $ext] . " " . $R['thanks_quote_open'] . $item_array['page_title'] . $R['thanks_quote_close'],
 				'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
-				'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['usersperpage'], '', 'th_ext = "' . $ext . '" and th_item = ' . $item),
+				'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['thanksperpage'], '', 'th_ext = "' . $ext . '" and th_item = ' . $item, '', 'page'),
 				'THANKS_BACK' => $item_back_url,
 			));
 		} else {
@@ -143,7 +143,7 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
   	'THANKS_CLASS' => $R['thanks_class_list'],
   	'THANKS_TITLE' => $L['thanks_title'],
   	'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
-  	'THANKS_LIST' => thanks_render_list('thanks.list', Cot::$cfg['plugin']['thanks']['usersperpage'], '', '', '', 'page', ''),
+  	'THANKS_LIST' => thanks_render_list('thanks.list', Cot::$cfg['plugin']['thanks']['usersperpage'], '', '', '', 'page'),
 	));
 	cot_display_messages($t);
 }

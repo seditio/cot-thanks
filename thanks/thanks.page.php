@@ -2,7 +2,7 @@
 /* ====================
 [BEGIN_COT_EXT]
 Hooks=page.tags
-Tags=page.tpl:{PAGE_THANK_CAN},{PAGE_THANK_URL},{PAGE_THANK_LINK},{PAGE_THANK_USERS_DATES},{PAGE_THANK_USERS},{FORUMS_POSTS_ROW_THANKFUL}
+Tags=page.tpl:{PAGE_THANKS_CAN}, {PAGE_THANKS_URL}, {PAGE_THANKS_LINK}, {PAGE_THANKS_COUNT}, {PAGE_THANKS_LIST_URL}, {PAGE_THANKS_USERS}
 [END_COT_EXT]
 ==================== */
 
@@ -22,6 +22,8 @@ if (Cot::$cfg['plugin']['thanks']['page_on']) {
 
 	Cot::$db->registerTable('thanks');
 	$db_thanks = Cot::$db->thanks;
+
+	$prefix = 'PAGE_';
 
 	if (!isset($thanks_auth_write)) {
 		require_once cot_langfile('thanks', 'plug');
@@ -58,21 +60,21 @@ if (Cot::$cfg['plugin']['thanks']['page_on']) {
 	}
 
 	$t->assign(array(
-		'PAGE_THANKS_COUNT'    => thanks_get_number('page', $page_id),
-		'PAGE_THANKS_LIST_URL' => cot_url('thanks', 'a=viewdetails&ext=page&item=' . $page_id),
-		'PAGE_THANKS_USERS'    => $th_users_list,
+		$prefix . 'THANKS_COUNT'    => thanks_get_number('page', $page_id),
+		$prefix . 'THANKS_LIST_URL' => cot_url('thanks', 'a=viewdetails&ext=page&item=' . $page_id),
+		$prefix . 'THANKS_USERS'    => $th_users_list,
 	));
 
 	if ($thanks_auth_write && !thanks_check_item($usr['id'], 'page', $id) && $usr['id'] != $pag['page_ownerid'] && !$th_thanked) {
 		$thanks_url = cot_url('thanks', 'a=thank&ext=page&item=' . $id);
 		$t->assign(array(
-			'PAGE_THANKS_CAN'  => true,
-			'PAGE_THANKS_URL'  => $thanks_url,
-			'PAGE_THANKS_LINK' => cot_rc_link($thanks_url, $L['thanks_thanks'], array('class' => Cot::$cfg['plugin']['thanks']['page_class'])),
+			$prefix . 'THANKS_CAN'  => true,
+			$prefix . 'THANKS_URL'  => $thanks_url,
+			$prefix . 'THANKS_LINK' => cot_rc_link($thanks_url, $L['thanks_thanks'], array('class' => Cot::$cfg['plugin']['thanks']['page_class'])),
 		));
 	} else {
 		$t->assign(array(
-			'PAGE_THANKS_CAN' => false,
+			$prefix . 'THANKS_CAN' => false,
 		));
 	}
 }

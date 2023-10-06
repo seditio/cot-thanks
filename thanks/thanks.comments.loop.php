@@ -2,7 +2,7 @@
 /* ====================
 [BEGIN_COT_EXT]
 Hooks=comments.loop
-Tags=comments.tpl:{COMMENTS_ROW_THANK_CAN},{COMMENTS_ROW_THANK_URL},{COMMENTS_ROW_THANK_LINK},{COMMENTS_ROW_THANK_COUNT},{COMMENTS_ROW_THANK_USERS},{COMMENTS_ROW_USERS_DATES},{FORUMS_POSTS_ROW_THANKFUL}
+Tags=comments.tpl:{COMMENTS_ROW_THANKS_CAN}, {COMMENTS_ROW_THANKS_URL}, {COMMENTS_ROW_THANKS_LINK}, {COMMENTS_ROW_THANKS_COUNT}, {COMMENTS_ROW_THANKS_LIST_URL}, {COMMENTS_ROW_THANKS_USERS}
 [END_COT_EXT]
 ==================== */
 
@@ -20,79 +20,58 @@ defined('COT_CODE') or die('Wrong URL');
 
 if (Cot::$cfg['plugin']['thanks']['comments_on']) {
 
-	require_once cot_incfile('thanks', 'plug');
-	require_once cot_incfile('thanks', 'plug', 'resources');
+	Cot::$db->registerTable('thanks');
+	$db_thanks = Cot::$db->thanks;
+	$db_com = Cot::$db->com;
+	$db_users = Cot::$db->users;
 
-	global $db_thanks, $db_users, $db_com, $cfg, $db;
+	$prefix = 'COMMENTS_ROW_';
+
+	if (!isset($thanks_auth_write)) {
+		require_once cot_langfile('thanks', 'plug');
+		require_once cot_incfile('thanks', 'plug');
+		include_once cot_incfile('thanks', 'plug', 'api');
+		require_once cot_incfile('thanks', 'plug','resources');
+		$thanks_auth_write = cot_auth('plug', 'thanks', 'W');
+	}
 
 	$item = $row['com_id'];
-	$res = $db->query("SELECT t.*, c.com_id, u.user_name
+	$sql_limit = (Cot::$cfg['plugin']['thanks']['maxthanked']) ? " LIMIT " . Cot::$cfg['plugin']['thanks']['maxthanked'] : "";
+
+	$res = Cot::$db->query("SELECT t.*, c.com_id, u.user_name
 		FROM $db_thanks AS t
 		LEFT JOIN $db_users AS u ON t.th_fromuser = u.user_id
 		LEFT JOIN $db_com AS c ON t.th_ext = 'comments' AND t.th_item = c.com_id
 		WHERE `th_ext` = 'comments' AND `th_item` = $item
 		ORDER BY th_date DESC
-		LIMIT $d, " . $cfg['plugin']['thanks']['usersperpage']);
+		$sql_limit");
 
 	$th_users_list = '';
-	$th_users_list_dates = '';
-
 	$th_thanked = false;
 
-	foreach ($res as $rows) {
-		if ($cfg['plugin']['thanks']['short']) {
-		if (!empty($th_users_list)) {
-			$th_users_list .= ', ';
-		}
-		$th_users_list .= cot_rc_link(cot_url('users', 'm=details&id=' . $rows['th_fromuser'] . '&u=' . ($rows['user_name'])), $rows['user_name']);
-			if ( $th_thanked || $usr['id'] == $rows['th_fromuser'] )
-			 $th_thanked = true;
-
-		} else {
-			if (!empty($th_users_list_dates)) {
-				$th_users_list_dates .= ', ';
-			}
-			$th_users_list_dates .=	cot_rc_link(cot_url('users', 'm=details&id=' . $rows['th_fromuser'] . '&u='.($rows['user_name'])), $rows['user_name']);
-			$th_users_list_dates .= $R['open'] . cot_date('d-m-Y', cot_date2stamp($rows['th_date'])) . $R['close'];
-			if ($th_thanked || $usr['id'] == $rows['th_fromuser']) {
-				$th_thanked = true;
-			}
-		}
+	foreach ($res as $row) {
+		(!empty($th_users_list)) && $th_users_list .= $R['thanks_divider'];
+		$th_users_list .= cot_rc_link(cot_url('users', 'm=details&id=' . $row['th_fromuser'] . '&u=' . ($row['user_name'])), $row['user_name']);
+		(!$cfg['plugin']['thanks']['short']) && $th_users_list .= $R['thanks_bracket_open'] . cot_date('date_full', $row['th_date']) . $R['thanks_bracket_close'];
+		($th_thanked || $usr['id'] == $row['th_fromuser']) && $th_thanked = true;
 	}
 
-	$total = $db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_ext = 'comments' AND th_item = $item")->fetchColumn();
-
 	$t->assign(array(
-		'COMMENTS_ROW_THANKFUL' => $L['thanks_tag'],
-		'COMMENTS_ROW_THANKS_COUNT' => $total,
+		$prefix . 'THANKS_COUNT'    => thanks_get_number('comments', $item),
+		$prefix . 'THANKS_LIST_URL' => cot_url('thanks', 'a=viewdetails&ext=comments&item=' . $item),
+		$prefix . 'THANKS_USERS'    => $th_users_list,
 	));
 
-	if ($cfg['plugin']['thanks']['short']) {
-		$t->assign(array('COMMENTS_ROW_THANK_USERS' => $th_users_list));
+	if ($thanks_auth_write && !thanks_check_item($usr['id'], 'comments', $item) && $usr['id'] != $row['com_authorid'] && !$th_thanked) {
+		$thanks_url = cot_url('thanks', 'a=thank&ext=comments&item=' . $item);
+		$t->assign(array(
+			$prefix . 'THANKS_CAN'  => true,
+			$prefix . 'THANKS_URL'  => $thanks_url,
+			$prefix . 'THANKS_LINK' => cot_rc_link($thanks_url, $L['thanks_thanks'], array('class' => Cot::$cfg['plugin']['thanks']['comments_class'])),
+		));
 	} else {
-		$t->assign(array('COMMENTS_ROW_USERS_DATES' => $th_users_list_dates));
+		$t->assign(array(
+			$prefix . 'THANKS_CAN' => false,
+		));
 	}
-
-	// Fallback
-	$t->assign(array(
-		'COMMENTS_ROW_THANK_CAN' => false,
-		'COMMENTS_ROW_THANK_URL' => cot_url('thanks', 'ext=comments&item=' . $row['com_id']),
-		'COMMENTS_ROW_THANK_LINK' => '',
-		'COMMENTS_ROW_THANK_COUNT' => (int) $row['thanks_count']
-	));
-
-	if (cot_auth('plug', 'thanks', 'W') && $usr['id'] != $row['com_authorid'] && (int)$row['com_authorid'] > 0) {
-		$thanks_today = $db->query("SELECT COUNT(*) FROM `$db_thanks` WHERE `th_fromuser` = {$usr['id']} AND DATE(`th_date`) = DATE(NOW())")->fetchColumn();
-		$thanks_touser_today = $row['thanks_touser_today'];
-		$thanks_toitem = $row['thanks_toitem'];
-
-		if ($thanks_today < $cfg['plugin']['thanks']['maxday'] && $thanks_touser_today < $cfg['plugin']['thanks']['maxuser'] && $thanks_toitem < 1)	{
-			$t->assign(array(
-				'COMMENTS_ROW_THANK_CAN' => true,
-				'COMMENTS_ROW_THANK_URL' => cot_url('thanks', 'a=thank&ext=comments&item='.$row['com_id']),
-				'COMMENTS_ROW_THANK_LINK' => cot_rc_link(cot_url('thanks', 'a=thank&ext=comments&item=' . $row['com_id']), $L['thanks_thanks'])
-			));
-		}
-	}
-
 }
