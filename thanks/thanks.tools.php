@@ -64,6 +64,14 @@ if ($a == 'viewdetails' && (int)$user > 0) {
 		cot_message('thanks_no_auth', 'danger');
 		cot_redirect(cot_url('index'));
 	}
+} elseif ($a == 'fullsync') {
+	if ($thanks_auth_admin) {
+		thanks_fullsync();
+		cot_redirect(cot_url('admin', 'm=other&p=thanks', '', true));
+	} else {
+		cot_message('thanks_no_auth', 'danger');
+		cot_redirect(cot_url('index'));
+	}
 } elseif (!$a) {
 	$t->assign(array(
   	'THANKS_TITLE' => $L['thanks_title_short'],

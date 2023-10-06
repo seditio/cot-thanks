@@ -108,12 +108,12 @@ function thanks_check_item($fromuser, $ext, $item) {
 function thanks_remove($id) {
 	Cot::$cache && Cot::$cache->clear_realm(SEDBY_THANKS_REALM, COT_CACHE_TYPE_ALL);
 	$db_thanks = Cot::$db->thanks;
-	$db_users = Cot::$db->users;
+	// $db_users = Cot::$db->users;
 	// $touser = Cot::$db->query("SELECT th_touser FROM $db_thanks WHERE th_id = ?", array($id))->fetchColumn();
 	$rm = Cot::$db->delete($db_thanks, "`th_id` = ?", array($id));
 	if ($rm) {
 		// Cot::$db->query("UPDATE $db_users SET user_thanks = user_thanks - 1 WHERE user_id = ?", array($touser));
-		cot_message('thanks_removed', 'ok');
+		// cot_message('thanks_removed', 'ok');
 		thanks_sync();
 	}
 	return (bool) $rm;
@@ -217,4 +217,38 @@ function thanks_get_number($ext, $item) {
 function thanks_wrong_parameter() {
 	cot_message('thanks_err_wrong_parameter', 'error');
 	cot_redirect(cot_url('thanks'));
+}
+
+function thanks_fullsync() {
+	$deleted_thanks = 0;
+	$query = "SELECT * FROM " . Cot::$db->thanks;
+	$res = Cot::$db->query($query);
+	while ($row = $res->fetch()) {
+		if (!sedby_user_exists($row['th_touser']) || !sedby_user_exists($row['th_fromuser']) || !thanks_item_exists($row['th_ext'], $row['th_item'])) {
+			thanks_remove($row['th_id']);
+			$deleted_thanks++;
+		}
+	}
+	if ($deleted_thanks > 0) {
+		cot_message('thanks_fullsync_complete_1', 'warning');
+	} else {
+		cot_message('thanks_fullsync_complete_0', 'ok');
+	}
+}
+
+function thanks_item_exists($ext, $item) {
+	switch ($ext) {
+		case 'page':
+			$db_pages = Cot::$db->pages;
+			return Cot::$db->query("SELECT COUNT(*) FROM $db_pages WHERE page_id = ?", array($item))->fetchColumn();
+			break;
+		case 'forums':
+			$db_forum_posts = Cot::$db->forum_posts;
+			return Cot::$db->query("SELECT COUNT(*) FROM $db_forum_posts WHERE fp_id = ?", array($item))->fetchColumn();
+			break;
+		case 'comments':
+			$db_com = Cot::$db->com;
+			return Cot::$db->query("SELECT COUNT(*) FROM $db_com WHERE com_id = ?", array($item))->fetchColumn();
+			break;
+	}
 }

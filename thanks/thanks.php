@@ -17,6 +17,8 @@ Hooks=standalone
 
 defined('COT_CODE') or die('Wrong URL');
 
+define('COT_THANKS', TRUE);
+
 include_once cot_incfile('thanks', 'plug', 'api');
 
 $out['subtitle'] = $L['thanks_meta_title'];
@@ -98,7 +100,7 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 			$t->assign(array(
 		  	'THANKS_TITLE' => $L['thanks_title_user'],
 		  	'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
-				'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['thanksperpage'], '', '', $user, 'page'),
+				'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['thanksperpage'], '', '', $user, 'page', 'thanks_ajax'),
 			));
 		} else {
 			thanks_wrong_parameter();
@@ -110,32 +112,35 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 			switch ($ext) {
 				case 'page':
 					$item_array = Cot::$db->query("SELECT page_title FROM $db_pages WHERE page_id = $item")->fetch();
-					$item_name			= $item_array['page_title'];
-					$item_name_full = Cot::$L['Page'] . " " . $R['thanks_quote_open'] . $item_array['page_title'] . $R['thanks_quote_close'];
-					$item_back_url	= $_SERVER['HTTP_REFERER'];
+					$item_name			= Cot::$L['Page'] . " " . $R['thanks_quote_open']. $item_array['page_title'] . $R['thanks_quote_close'];
+					$item_name_full = Cot::$L['thanks_title_page'] . " " . $R['thanks_quote_open'] . $item_array['page_title'] . $R['thanks_quote_close'];
 					break;
 				case 'forums':
-					$item_array = Cot::$db->query("SELECT fp_id, fp_topicid FROM $db_forum_posts WHERE fp_id = $item")->fetch();
-					$item_name			= $item_array['fp_id'];
-					$item_name_full = Cot::$L['forums_post'] . " " . $R['thanks_quote_open'] . $item_array['fp_id'] . $R['thanks_quote_close'];
-					$item_back_url = $_SERVER['HTTP_REFERER'];
+					$item_array = Cot::$db->query("SELECT fp_id, fp_topicid,
+						(SELECT ft_title FROM $db_forum_topics AS ft WHERE fp.fp_topicid = ft.ft_id) AS ft_title
+						FROM $db_forum_posts AS fp
+						WHERE fp_id = $item")->fetch();
+					$item_name 			= Cot::$L['thanks_post'] . " #" . $item_array['fp_id'];
+					$item_name_full	= Cot::$L['thanks_title_forums'] . " #" . $item_array['fp_id'] . " " . $L['thanks_in_topic'] . " " . $R['thanks_quote_open'] . $item_array['ft_title'] . $R['thanks_quote_close'];
 					break;
 				case 'comments':
-					$item_array = Cot::$db->query("SELECT com_id, com_code, com_area FROM $db_com WHERE com_id = $item")->fetch();
-					$item_name	= $item_array['com_id'];
-					$item_name_full = Cot::$L['comments_comment'] . " " . $R['thanks_quote_open'] . $item_array['com_id'] . $R['thanks_quote_close'];
-					$item_back_url = $_SERVER['HTTP_REFERER'];
+					$item_array = Cot::$db->query("SELECT com_id, com_code,
+						(SELECT page_title FROM $db_pages AS p WHERE c.com_code = p.page_id) AS page_title
+						FROM $db_com AS c
+						WHERE com_id = $item")->fetch();
+					$item_name			= Cot::$L['comments_comment'] . " #" . $item_array['com_id'];
+					$item_name_full = Cot::$L['thanks_title_comments'] . " #" . $item_array['com_id'] . " " . $L['thanks_for_page'] . " " . $R['thanks_quote_open'] . $item_array['page_title'] . $R['thanks_quote_close'];
 					break;
 			}
 			// till here
 
 			$crumbs[] = array(cot_url('thanks'), Cot::$L['thanks_title_short']);
-			$crumbs[] = $item_name_full;
+			$crumbs[] = $item_name;
 			$t->assign(array(
-				'THANKS_TITLE' => $L['thanks_title_' . $ext] . " " . $R['thanks_quote_open'] . $item_name . $R['thanks_quote_close'],
+				'THANKS_TITLE' => $item_name_full,
 				'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
-				'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['thanksperpage'], '', 'th_ext = "' . $ext . '" and th_item = ' . $item, '', 'page'),
-				'THANKS_BACK' => $item_back_url,
+				'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['thanksperpage'], '', 'th_ext = "' . $ext . '" and th_item = ' . $item, '', 'page', 'thanks_ajax'),
+				'THANKS_BACK' => $_SERVER['HTTP_REFERER'],
 			));
 		} else {
 			thanks_wrong_parameter();
@@ -150,7 +155,7 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
   	'THANKS_CLASS' => $R['thanks_class_list'],
   	'THANKS_TITLE' => $L['thanks_title'],
   	'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
-  	'THANKS_LIST' => thanks_render_list('thanks.list', Cot::$cfg['plugin']['thanks']['usersperpage'], '', '', '', 'page'),
+  	'THANKS_LIST' => thanks_render_list('thanks.list', Cot::$cfg['plugin']['thanks']['usersperpage'], '', '', '', 'page', 'thanks_ajax'),
 	));
 	cot_display_messages($t);
 }

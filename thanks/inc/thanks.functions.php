@@ -119,7 +119,10 @@ function thanks_render_list($tpl = 'thanks.list', $items = 0, $order = '', $extr
 			$t->parse("MAIN.PAGE_ROW");
 		}
 
-		$t->assign('PAGE_TOP_SYNC_URL', cot_url('admin', 'm=other&p=thanks&a=sync'));
+		$t->assign(array(
+			'PAGE_TOP_SYNC_URL' => cot_url('admin', 'm=other&p=thanks&a=sync'),
+			'PAGE_TOP_FULLSYNC_URL' => cot_url('admin', 'm=other&p=thanks&a=fullsync'),
+		));
 
 		// Render pagination if needed
 		if ($enablePagination) {
@@ -273,8 +276,8 @@ function thanks_render_user($tpl = 'thanks.user', $items = 0, $order = '', $extr
 				'PAGE_ROW_DATE'				=> cot_date('d-m-Y H:i:s', $row['th_date']),
 				'PAGE_ROW_DATE_STAMP'	=> $row['th_date'],
 
-				'PAGE_ROW_TO_NAME'		=> htmlspecialchars($row['to_name']),
-				'PAGE_ROW_TO_URL'			=> cot_url('users', 'm=details&id=' . $row['th_touser'] . '&u=' . urlencode($row['to_name'])),
+				'PAGE_ROW_TO_NAME'		=> sedby_user_exists($row['th_touser']) ? htmlspecialchars($row['to_name']) : "",
+				'PAGE_ROW_TO_URL'			=> sedby_user_exists($row['th_touser']) ? cot_url('users', 'm=details&id=' . $row['th_touser'] . '&u=' . urlencode($row['to_name'])) : "",
 
 				'PAGE_ROW_FROM_NAME'	=> sedby_user_exists($row['th_fromuser']) ? htmlspecialchars($row['from_name']) : "",
 				'PAGE_ROW_FROM_URL'		=> sedby_user_exists($row['th_fromuser']) ? cot_url('users', 'm=details&id=' . $row['th_fromuser'] . '&u=' . urlencode($row['from_name'])) : "",

@@ -5,6 +5,9 @@
 		<a href="{PAGE_TOP_SYNC_URL}" class="btn btn-sm btn-primary">
 			{PHP.R.icon-refresh}<span>{PHP.L.Resync}</span>
 		</a>
+		<a href="{PAGE_TOP_FULLSYNC_URL}" class="btn btn-sm btn-primary">
+			{PHP.R.icon-refresh}<span>{PHP.L.thanks_fullsync}</span>
+		</a>
 	</div>
 <!-- ENDIF -->
 	<table class="table table-striped table-hover mb-0">
