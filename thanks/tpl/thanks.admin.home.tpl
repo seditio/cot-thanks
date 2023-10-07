@@ -4,8 +4,8 @@
 		<thead>
 			<tr class="text-center">
 				<th>{PHP.L.Date}</th>
+				<th>{PHP.L.Sender}</th>
 				<th>{PHP.L.Recipient}</th>
-				<th>{PHP.L.Category}</th>
 				<th>{PHP.L.Item}</th>
 			</tr>
 		</thead>
@@ -16,10 +16,10 @@
 					{PAGE_ROW_DATE_STAMP|cot_date('j M', $this)}
 				</td>
 				<td>
-					<a href="{PAGE_ROW_TO_URL}">{PAGE_ROW_TO_NAME}</a>
+					<a href="{PAGE_ROW_FROM_URL}">{PAGE_ROW_FROM_NAME}</a>
 				</td>
 				<td>
-					<a href="{PAGE_ROW_CAT_URL}">{PAGE_ROW_CAT_TITLE}</a>
+					<a href="{PAGE_ROW_TO_URL}">{PAGE_ROW_TO_NAME}</a>
 				</td>
 				<td>
 					<a href="{PAGE_ROW_URL}">{PAGE_ROW_TITLE}</a>

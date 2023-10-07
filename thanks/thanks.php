@@ -108,7 +108,7 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 	} elseif (empty($user) && in_array($ext, $th_areas) && !empty($item)) {
 		if (thanks_get_number($ext, $item)) {
 
-			// Better way maybe?
+			// Better way maybe???
 			switch ($ext) {
 				case 'page':
 					$item_array = Cot::$db->query("SELECT page_title FROM $db_pages WHERE page_id = $item")->fetch();
@@ -140,7 +140,7 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 				'THANKS_TITLE' => $item_name_full,
 				'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
 				'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['thanksperpage'], '', 'th_ext = "' . $ext . '" and th_item = ' . $item, '', 'page', 'thanks_ajax'),
-				'THANKS_BACK' => $_SERVER['HTTP_REFERER'],
+				'THANKS_BACK' => (isset($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : "",
 			));
 		} else {
 			thanks_wrong_parameter();

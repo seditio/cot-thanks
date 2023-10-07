@@ -252,3 +252,13 @@ function thanks_item_exists($ext, $item) {
 			break;
 	}
 }
+
+function thanks_gen_userlist($res) {
+	foreach ($res as $t_row) {
+		(!empty($th_users_list)) && $th_users_list .= Cot::$R['thanks_divider'];
+		$th_users_list .= cot_rc_link(cot_url('users', 'm=details&id=' . $t_row['th_fromuser'] . '&u=' . ($t_row['user_name'])), $t_row['user_name']);
+		(!$cfg['plugin']['thanks']['short']) && $th_users_list .= Cot::$R['thanks_bracket_open'] . cot_date('date_full', $t_row['th_date']) . Cot::$R['thanks_bracket_close'];
+		($th_thanked || $usr['id'] == $t_row['th_fromuser']) && $th_thanked = true;
+	}
+	return $th_users_list;
+}

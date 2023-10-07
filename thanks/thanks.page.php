@@ -24,6 +24,14 @@ if (Cot::$cfg['plugin']['thanks']['page_on']) {
 	$db_thanks = Cot::$db->thanks;
 
 	$prefix = 'PAGE_';
+	$ext = 'page';
+	$item = $pag['page_id'];
+	$item_owner = $pag['page_ownerid'];
+
+	$sql_limit = (Cot::$cfg['plugin']['thanks']['maxthanked']) ? " LIMIT " . Cot::$cfg['plugin']['thanks']['maxthanked'] : "";
+
+	$th_users_list = '';
+	$th_thanked = false;
 
 	if (!isset($thanks_auth_write)) {
 		require_once cot_langfile('thanks', 'plug');
@@ -32,9 +40,6 @@ if (Cot::$cfg['plugin']['thanks']['page_on']) {
 		require_once cot_incfile('thanks', 'plug','resources');
 		$thanks_auth_write = cot_auth('plug', 'thanks', 'W');
 	}
-
-	$item = $pag['page_id'];
-	$sql_limit = (Cot::$cfg['plugin']['thanks']['maxthanked']) ? " LIMIT " . Cot::$cfg['plugin']['thanks']['maxthanked'] : "";
 
 	// $res = $db->query("SELECT t.*, u.user_name
 	// 	FROM $db_thanks AS t
@@ -45,32 +50,22 @@ if (Cot::$cfg['plugin']['thanks']['page_on']) {
 
 	$res = $db->query("SELECT t.*, (SELECT user_name FROM $db_users AS u WHERE t.th_fromuser = u.user_id) AS user_name
 		FROM $db_thanks AS t
-		WHERE th_ext = 'page' AND th_item = $item
+		WHERE th_ext = '$ext' AND th_item = $item
 		ORDER BY th_date DESC
 		$sql_limit");
 
-	$th_users_list = '';
-	$th_thanked = false;
-
-	foreach ($res as $t_row) {
-		(!empty($th_users_list)) && $th_users_list .= $R['thanks_divider'];
-		$th_users_list .= cot_rc_link(cot_url('users', 'm=details&id=' . $t_row['th_fromuser'] . '&u=' . ($t_row['user_name'])), $t_row['user_name']);
-		(!$cfg['plugin']['thanks']['short']) && $th_users_list .= $R['thanks_bracket_open'] . cot_date('date_full', $t_row['th_date']) . $R['thanks_bracket_close'];
-		($th_thanked || $usr['id'] == $t_row['th_fromuser']) && $th_thanked = true;
-	}
-
 	$t->assign(array(
-		$prefix . 'THANKS_COUNT'    => thanks_get_number('page', $item),
-		$prefix . 'THANKS_LIST_URL' => cot_url('thanks', 'a=viewdetails&ext=page&item=' . $item),
-		$prefix . 'THANKS_USERS'    => $th_users_list,
+		$prefix . 'THANKS_COUNT'    => thanks_get_number($ext, $item),
+		$prefix . 'THANKS_LIST_URL' => cot_url('thanks', 'a=viewdetails&ext=' . $ext . '&item=' . $item),
+		$prefix . 'THANKS_USERS'    => thanks_gen_userlist($res),
 	));
 
-	if ($thanks_auth_write && !thanks_check_item($usr['id'], 'page', $id) && $usr['id'] != $pag['page_ownerid'] && !$th_thanked) {
-		$thanks_url = cot_url('thanks', 'a=thank&ext=page&item=' . $id);
+	if ($thanks_auth_write && !thanks_check_item($usr['id'], $ext, $item) && $usr['id'] != $item_owner && !$th_thanked) {
+		$thanks_url = cot_url('thanks', 'a=thank&ext=' . $ext . '&item=' . $item);
 		$t->assign(array(
 			$prefix . 'THANKS_CAN'  => true,
 			$prefix . 'THANKS_URL'  => $thanks_url,
-			$prefix . 'THANKS_LINK' => cot_rc_link($thanks_url, $L['thanks_thanks'], array('class' => Cot::$cfg['plugin']['thanks']['page_class'])),
+			$prefix . 'THANKS_LINK' => cot_rc_link($thanks_url, $L['thanks_thanks'], array('class' => Cot::$cfg['plugin']['thanks'][$ext . '_class'])),
 		));
 	} else {
 		$t->assign(array(

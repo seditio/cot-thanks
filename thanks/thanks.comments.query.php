@@ -18,6 +18,7 @@ Hooks=comments.query
 defined('COT_CODE') or die('Wrong URL');
 
 if (Cot::$cfg['plugin']['thanks']['comments_on'] && Cot::$cfg['plugin']['thanks']['comments_order']) {
+	Cot::$db->registerTable('thanks');
 	$db_thanks = Cot::$db->thanks;
 
 	$comments_join_columns .= ", (SELECT COUNT(*) FROM `$db_thanks` WHERE th_ext = 'comments' AND th_item = c.com_id) AS thanks_count";

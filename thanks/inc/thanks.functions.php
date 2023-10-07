@@ -88,7 +88,9 @@ function thanks_render_list($tpl = 'thanks.list', $items = 0, $order = '', $extr
 		}
 		/* ===== */
 
-		$res = Cot::$db->query("SELECT u.*, (SELECT COUNT(*) FROM $db_thanks AS t WHERE t.th_touser = u.user_id) AS th_count
+		// Use extrafield rather than count???
+		$res = Cot::$db->query("SELECT u.*,
+			(SELECT COUNT(*) FROM $db_thanks AS t WHERE t.th_touser = u.user_id) AS th_count
 			FROM $db_users
 			AS u
 			$sql_cond $sql_order $sql_limit");
@@ -100,7 +102,9 @@ function thanks_render_list($tpl = 'thanks.list', $items = 0, $order = '', $extr
 
 		while ($row = $res->fetch()) {
 			$jj++;
+			// Optionize???
 			$t->assign(cot_generate_usertags($row, 'PAGE_ROW_USER_'));
+			// Same for the th_fromuser???
 			$t->assign(array(
 				'PAGE_ROW_NUM' => $jj + $d,
 				'PAGE_ROW_ODDEVEN' => cot_build_oddeven($jj),
