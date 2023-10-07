@@ -20,8 +20,8 @@ Requires_plugins=cotlib
 Recommends_modules=page,forums
 Recommends_plugins=comments
 [END_COT_EXT]
-
 [BEGIN_COT_EXT_CONFIG]
+
 limits=00:separator:::
 maxday=01:string::10:Max thanks a user can give a day
 maxuser=02:string::5:Max thanks a day a user can give to a particular user
@@ -35,7 +35,6 @@ ajax=14:radio::0:Use ajax
 encrypt_ajax_urls=15:radio::0:Encrypt ajax URLs
 encrypt_key=16:string::1234567890123456:Secret Key
 encrypt_iv=17:string::1234567890123456:Initialization Vector
-
 
 page=20:separator:::
 page_on=21:radio::1:Turn on thanks for pages
@@ -53,8 +52,8 @@ comments_order=43:radio::0:Sort comments by thanks
 misc=50:separator:::
 short=51:radio::0: Short string - only user name, no date stamp
 page_on_result=52:radio::0: Display page after thanks or simply redirect to referer
-
-
+notify_pm=53:radio::0: Notify to PM on new a new like
+notify_email=54:radio::0: Notify to email on new a new like
 
 [END_COT_EXT_CONFIG]
 ==================== */

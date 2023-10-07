@@ -51,10 +51,17 @@ if (Cot::$cfg['plugin']['thanks']['comments_on']) {
 		ORDER BY th_date DESC
 		$sql_limit");
 
+	foreach ($res as $t_row) {
+		(!empty($th_users_list)) && $th_users_list .= $R['thanks_divider'];
+		$th_users_list .= cot_rc_link(cot_url('users', 'm=details&id=' . $t_row['th_fromuser'] . '&u=' . ($t_row['user_name'])), $t_row['user_name']);
+		(!$cfg['plugin']['thanks']['short']) && $th_users_list .= $R['thanks_bracket_open'] . cot_date('date_full', $t_row['th_date']) . $R['thanks_bracket_close'];
+		($th_thanked || $usr['id'] == $t_row['th_fromuser']) && $th_thanked = true;
+	}
+
 	$t->assign(array(
 		$prefix . 'THANKS_COUNT'    => thanks_get_number($ext, $item),
 		$prefix . 'THANKS_LIST_URL' => cot_url('thanks', 'a=viewdetails&ext=' . $ext . '&item=' . $item),
-		$prefix . 'THANKS_USERS'    => thanks_gen_userlist($res),
+		$prefix . 'THANKS_USERS'    => $th_users_list,
 	));
 
 	if ($thanks_auth_write && !thanks_check_item($usr['id'], $ext, $item) && $usr['id'] != $item_owner && !$th_thanked) {

@@ -70,6 +70,10 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 		// Все в порядке
 		case THANKS_ERR_NONE:
 			thanks_add($user, $usr['id'], $ext, $item);
+			if (Cot::$cfg['plugin']['thanks']['notify_pm']) {
+				include_once cot_incfile('pm', 'module');
+				cot_send_pm($user, $L['thanks_pm_subject'], cot_rc('pm_message', array('intro' => $L['thanks_pm_body'], 'link' => cot_url('thanks', 'a=viewdetails&ext=' . $ext . '&item=' . $item . ''))));
+			}
 			cot_message('thanks_done');
 			break;
 	}
