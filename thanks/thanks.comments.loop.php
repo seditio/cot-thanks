@@ -64,7 +64,7 @@ if (Cot::$cfg['plugin']['thanks']['comments_on']) {
 		$prefix . 'THANKS_USERS'    => $th_users_list,
 	));
 
-	if ($thanks_auth_write && !thanks_check_item($usr['id'], $ext, $item) && $usr['id'] != $item_owner && !$th_thanked) {
+	if ($thanks_auth_write && !thanks_check_item($usr['id'], $ext, $item) && $usr['id'] != $item_owner && !$th_thanked && $item_owner != 0) {
 		$thanks_url = cot_url('thanks', 'a=thank&ext=' . $ext . '&item=' . $item);
 		$t->assign(array(
 			$prefix . 'THANKS_CAN'  => true,
