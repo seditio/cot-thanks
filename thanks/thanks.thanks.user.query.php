@@ -35,9 +35,17 @@ if (cot_module_active('forums') && Cot::$cfg['plugin']['thanks']['forums_on']) {
 if (cot_plugin_active('comments') && Cot::$cfg['plugin']['thanks']['comments_on']) {
 	$comments_on = true;
 	require_once cot_incfile('comments', 'plug');
-	$thanks_join_columns .= ", com.*, pag2.page_alias AS p2_alias, pag2.page_id AS p2_id, pag2.page_cat AS p2_cat, pag2.page_title AS p2_title ";
-	$thanks_join_tables .= " LEFT JOIN $db_com AS com ON t.th_ext = 'comments' AND t.th_item = com.com_id LEFT JOIN $db_pages AS pag2 ON com.com_area = 'page' AND com.com_code = pag2.page_id ";
-}
+	$thanks_join_columns .= ", com.* ";
+	$thanks_join_tables .= " LEFT JOIN $db_com AS com ON t.th_ext = 'comments' AND t.th_item = com.com_id ";
 
-// $thanks_join_columns .= ", fu.user_name ";
-// $thanks_join_tables .= " LEFT JOIN $db_users AS fu ON t.th_fromuser = fu.user_id ";
+	if (cot_module_active('page')) {
+		$thanks_join_columns .= ", pag2.page_alias AS p2_alias, pag2.page_id AS p2_id, pag2.page_cat AS p2_cat, pag2.page_title AS p2_title ";
+		$thanks_join_tables .= " LEFT JOIN $db_pages AS pag2 ON com.com_area = 'page' AND com.com_code = pag2.page_id ";
+	}
+
+	if (cot_module_active('polls')) {
+		Cot::$db->registerTable('polls');
+		$thanks_join_columns .= ", poll2.poll_text AS pl2_text, poll2.poll_id AS pl2_id ";
+		$thanks_join_tables .= " LEFT JOIN " . Cot::$db->polls . " AS poll2 ON com.com_area = 'polls' AND com.com_code = poll2.poll_id ";
+	}
+}

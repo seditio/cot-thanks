@@ -29,7 +29,7 @@
 					<a href="{PAGE_ROW_FROM_URL}">{PAGE_ROW_FROM_NAME}</a>
 				</td>
 				<td>
-					<a href="{PAGE_ROW_CAT_URL}">{PAGE_ROW_CAT_TITLE}</a>
+					{PAGE_ROW_CAT_LINK}
 				</td>
 				<td>
 					<a href="{PAGE_ROW_URL}">{PAGE_ROW_TITLE}</a>

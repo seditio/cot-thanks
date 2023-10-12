@@ -217,11 +217,15 @@ function thanks_render_user($tpl = 'thanks.user', $items = 0, $order = '', $extr
 
 		// DB tables shortcuts
 		Cot::$db->registerTable('thanks');
+		$db_thanks = Cot::$db->thanks;
+
 		$db_com = Cot::$db->com;
+
 		$db_forum_topics = Cot::$db->forum_topics;
 		$db_forum_posts = Cot::$db->forum_posts;
+
 		$db_pages = Cot::$db->pages;
-		$db_thanks = Cot::$db->thanks;
+
 		$db_users = Cot::$db->users;
 
 		// Display the items

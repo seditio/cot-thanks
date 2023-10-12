@@ -78,12 +78,16 @@ $L['thanks_title_comments'] = 'Лайки комментария';
 
 $L['thanks_in_topic'] = 'в топике';
 $L['thanks_for_page'] = 'для страницы';
+$L['thanks_for_poll'] = 'для опроса';
 
 $L['thanks_post'] = 'Пост';
 $L['thanks_topic'] = 'Топик';
 $L['thanks_post_in_topic'] = 'Пост в топике';
 
 $L['thanks_comment_to_page'] = 'Комментарий к странице';
+$L['thanks_comment_to_poll'] = 'Комментарий к опросу';
+
+$L['thanks_no_category'] = 'Категория отсутствует';
 
 $L['thanks_thanked'] = 'Поблагодарили';
 

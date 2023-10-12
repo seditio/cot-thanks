@@ -69,6 +69,7 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 			break;
 		// Все в порядке
 		case THANKS_ERR_NONE:
+			include_once cot_langfile('thanks', 'plug');
 			thanks_add($user, $usr['id'], $ext, $item);
 			if (Cot::$cfg['plugin']['thanks']['notify_pm']) {
 				include_once cot_incfile('pm', 'module');
@@ -128,12 +129,17 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 					$item_name_full	= Cot::$L['thanks_title_forums'] . " #" . $item_array['fp_id'] . " " . $L['thanks_in_topic'] . " " . $R['thanks_quote_open'] . $item_array['ft_title'] . $R['thanks_quote_close'];
 					break;
 				case 'comments':
-					$item_array = Cot::$db->query("SELECT com_id, com_code,
-						(SELECT page_title FROM $db_pages AS p WHERE c.com_code = p.page_id) AS page_title
-						FROM $db_com AS c
-						WHERE com_id = $item")->fetch();
+					$item_array = Cot::$db->query("SELECT com_id, com_code, com_area FROM $db_com WHERE com_id = $item")->fetch();
+					if ($item_array['com_area'] == 'page') {
+						$item_array['object_title'] = Cot::$db->query("SELECT page_title FROM $db_pages WHERE page_id = {$item_array['com_code']}")->fetchColumn();
+						$item_array['object_for'] = $L['thanks_for_page'];
+					} elseif ($item_array['com_area'] == 'polls') {
+						Cot::$db->registerTable('polls');
+						$item_array['object_title'] = Cot::$db->query("SELECT poll_text FROM " . Cot::$db->polls . " WHERE poll_id = {$item_array['com_code']}")->fetchColumn();
+						$item_array['object_for'] = $L['thanks_for_poll'];
+					}
 					$item_name			= Cot::$L['comments_comment'] . " #" . $item_array['com_id'];
-					$item_name_full = Cot::$L['thanks_title_comments'] . " #" . $item_array['com_id'] . " " . $L['thanks_for_page'] . " " . $R['thanks_quote_open'] . $item_array['page_title'] . $R['thanks_quote_close'];
+					$item_name_full = Cot::$L['thanks_title_comments'] . " #" . $item_array['com_id'] . " " . $item_array['object_for'] . " " . $R['thanks_quote_open'] . $item_array['object_title'] . $R['thanks_quote_close'];
 					break;
 			}
 			// till here
