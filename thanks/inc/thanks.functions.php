@@ -123,6 +123,8 @@ function thanks_render_list($tpl = 'thanks.list', $items = 0, $order = '', $extr
 			$t->parse("MAIN.PAGE_ROW");
 		}
 
+		($jj == 0) && $t->parse("MAIN.NO_ROW");
+
 		$t->assign(array(
 			'PAGE_TOP_SYNC_URL' => cot_url('admin', 'm=other&p=thanks&a=sync'),
 			'PAGE_TOP_FULLSYNC_URL' => cot_url('admin', 'm=other&p=thanks&a=fullsync'),
@@ -167,8 +169,6 @@ function thanks_render_list($tpl = 'thanks.list', $items = 0, $order = '', $extr
 				'PAGE_TOP_TOTALPAGES'  => $pagenav['total']
 			));
 		}
-
-		($jj == 0) && $t->parse("MAIN.NONE");
 
 		/* === Hook === */
 		foreach (cot_getextplugins('thanks.list.tags') as $pl) {
@@ -302,6 +302,8 @@ function thanks_render_user($tpl = 'thanks.user', $items = 0, $order = '', $extr
 			$t->parse("MAIN.PAGE_ROW");
 		}
 
+		($jj == 0) && $t->parse("MAIN.NO_ROW");
+
 		// Render pagination if needed
 		if ($enablePagination) {
 			$totalitems = Cot::$db->query("SELECT COUNT(*) FROM $db_thanks $sql_cond")->fetchColumn();
@@ -343,8 +345,6 @@ function thanks_render_user($tpl = 'thanks.user', $items = 0, $order = '', $extr
 				'PAGE_TOP_TOTALPAGES'  => $pagenav['total']
 			));
 		}
-
-		($jj == 0) && $t->parse("MAIN.NONE");
 
 		/* === Hook === */
 		foreach (cot_getextplugins('thanks.user.tags') as $pl) {

@@ -100,13 +100,16 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 
 	if (!empty($user)) {
 		if (sedby_user_exists($user)) {
+			$user_name = Cot::$db->query("SELECT user_name FROM $db_users WHERE user_id = $user")->fetchColumn();
 			$crumbs[] = array(cot_url('thanks'), Cot::$L['thanks_title_short']);
-			$crumbs[] = Cot::$db->query("SELECT user_name FROM $db_users WHERE user_id = $user")->fetchColumn();
+			$crumbs[] = $user_name;
 			$t->assign(array(
-		  	'THANKS_TITLE' => $L['thanks_title_user'],
+		  	'THANKS_TITLE' => $L['thanks_title_user'] . " " . $user_name,
 		  	'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
 				'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['thanksperpage'], '', '', $user, 'page', 'thanks_ajax'),
 			));
+			$out['subtitle'] .= " " . $user_name;
+			$out['desc'] .= " " . $user_name . " (ID #" . $user . ")";
 		} else {
 			thanks_wrong_parameter();
 		}
@@ -117,16 +120,16 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 			switch ($ext) {
 				case 'page':
 					$item_array = Cot::$db->query("SELECT page_title FROM $db_pages WHERE page_id = $item")->fetch();
-					$item_name			= Cot::$L['Page'] . " " . $R['thanks_quote_open']. $item_array['page_title'] . $R['thanks_quote_close'];
-					$item_name_full = Cot::$L['thanks_title_page'] . " " . $R['thanks_quote_open'] . $item_array['page_title'] . $R['thanks_quote_close'];
+					$item_name_short	= Cot::$L['Page'] . " " . $R['thanks_quote_open']. $item_array['page_title'] . $R['thanks_quote_close'];
+					$item_name_full		= Cot::$L['thanks_title_page'] . " " . $R['thanks_quote_open'] . $item_array['page_title'] . $R['thanks_quote_close'];
 					break;
 				case 'forums':
 					$item_array = Cot::$db->query("SELECT fp_id, fp_topicid,
 						(SELECT ft_title FROM $db_forum_topics AS ft WHERE fp.fp_topicid = ft.ft_id) AS ft_title
 						FROM $db_forum_posts AS fp
 						WHERE fp_id = $item")->fetch();
-					$item_name 			= Cot::$L['thanks_post'] . " #" . $item_array['fp_id'];
-					$item_name_full	= Cot::$L['thanks_title_forums'] . " #" . $item_array['fp_id'] . " " . $L['thanks_in_topic'] . " " . $R['thanks_quote_open'] . $item_array['ft_title'] . $R['thanks_quote_close'];
+					$item_name_short	= Cot::$L['thanks_post'] . " #" . $item_array['fp_id'];
+					$item_name_full		= Cot::$L['thanks_title_forums'] . " #" . $item_array['fp_id'] . " " . $L['thanks_in_topic'] . " " . $R['thanks_quote_open'] . $item_array['ft_title'] . $R['thanks_quote_close'];
 					break;
 				case 'comments':
 					$item_array = Cot::$db->query("SELECT com_id, com_code, com_area FROM $db_com WHERE com_id = $item")->fetch();
@@ -138,20 +141,21 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 						$item_array['object_title'] = Cot::$db->query("SELECT poll_text FROM " . Cot::$db->polls . " WHERE poll_id = {$item_array['com_code']}")->fetchColumn();
 						$item_array['object_for'] = $L['thanks_for_poll'];
 					}
-					$item_name			= Cot::$L['comments_comment'] . " #" . $item_array['com_id'];
-					$item_name_full = Cot::$L['thanks_title_comments'] . " #" . $item_array['com_id'] . " " . $item_array['object_for'] . " " . $R['thanks_quote_open'] . $item_array['object_title'] . $R['thanks_quote_close'];
+					$item_name_short	= Cot::$L['comments_comment'] . " #" . $item_array['com_id'];
+					$item_name_full		= Cot::$L['thanks_title_comments'] . " #" . $item_array['com_id'] . " " . $item_array['object_for'] . " " . $R['thanks_quote_open'] . $item_array['object_title'] . $R['thanks_quote_close'];
 					break;
 			}
 			// till here
 
 			$crumbs[] = array(cot_url('thanks'), Cot::$L['thanks_title_short']);
-			$crumbs[] = $item_name;
+			$crumbs[] = $item_name_short;
 			$t->assign(array(
 				'THANKS_TITLE' => $item_name_full,
 				'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
 				'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['thanksperpage'], '', 'th_ext = "' . $ext . '" and th_item = ' . $item, '', 'page', 'thanks_ajax'),
 				'THANKS_BACK' => (isset($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : "",
 			));
+			$out['subtitle'] = $out['desc'] = $L['thanks_title_' . $ext] . " ID #" . $item;
 		} else {
 			thanks_wrong_parameter();
 		}
