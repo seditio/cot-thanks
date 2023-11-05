@@ -71,9 +71,19 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 		case THANKS_ERR_NONE:
 			include_once cot_langfile('thanks', 'plug');
 			thanks_add($user, $usr['id'], $ext, $item);
-			if (Cot::$cfg['plugin']['thanks']['notify_pm']) {
+			if (Cot::$cfg['plugin']['thanks']['notify_by_pm']) {
 				include_once cot_incfile('pm', 'module');
-				cot_send_pm($user, $L['thanks_pm_subject'], cot_rc('pm_message', array('intro' => $L['thanks_pm_body'], 'link' => cot_url('thanks', 'a=viewdetails&ext=' . $ext . '&item=' . $item . ''))));
+				cot_send_pm($user, $L['thanks_subject'], cot_rc('thanks_pm_notification', ['intro' => $L['thanks_body'], 'link' => cot_url('thanks', 'a=viewdetails&ext=' . $ext . '&item=' . $item . '')]));
+			}
+			if (Cot::$cfg['plugin']['thanks']['notify_by_email']) {
+				cot_mail(
+					[
+						'to' => sedby_user_email($user),
+						'from' => [Cot::$cfg['plugin']['thanks']['notify_from']]
+					],
+					$L['thanks_subject'],
+					cot_rc('thanks_email_notification', ['intro' => $L['thanks_body'], 'link' => Cot::$cfg['mainurl'] . '/' . cot_url('thanks', 'a=viewdetails&ext=' . $ext . '&item=' . $item, '', true)])
+				);
 			}
 			cot_message('thanks_done');
 			break;
@@ -82,10 +92,10 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 	if (Cot::$cfg['plugin']['thanks']['page_on_result']) {
 		$t = new XTemplate(cot_tplfile('thanks.done', 'plug'));
 		$crumbs[] = Cot::$L['thanks_title_short'];
-		$t->assign(array(
+		$t->assign([
 	  	'THANKS_CLASS' => $R['thanks_class_list'],
 	  	'THANKS_BACK_URL' => $_SERVER['HTTP_REFERER'],
-		));
+		]);
 		cot_display_messages($t);
 	} else {
 		cot_redirect($_SERVER['HTTP_REFERER']);
@@ -101,13 +111,13 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 	if (!empty($user)) {
 		if (sedby_user_exists($user)) {
 			$user_name = Cot::$db->query("SELECT user_name FROM $db_users WHERE user_id = $user")->fetchColumn();
-			$crumbs[] = array(cot_url('thanks'), Cot::$L['thanks_title_short']);
+			$crumbs[] = [cot_url('thanks'), Cot::$L['thanks_title_short']];
 			$crumbs[] = $user_name;
-			$t->assign(array(
+			$t->assign([
 		  	'THANKS_TITLE' => $L['thanks_title_user'] . " " . $user_name,
 		  	'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
 				'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['thanksperpage'], '', '', $user, 'page', 'thanks_ajax'),
-			));
+			]);
 			$out['subtitle'] .= " " . $user_name;
 			$out['desc'] .= " " . $user_name . " (ID #" . $user . ")";
 		} else {
@@ -147,14 +157,14 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 			}
 			// till here
 
-			$crumbs[] = array(cot_url('thanks'), Cot::$L['thanks_title_short']);
+			$crumbs[] = [cot_url('thanks'), Cot::$L['thanks_title_short']];
 			$crumbs[] = $item_name_short;
-			$t->assign(array(
+			$t->assign([
 				'THANKS_TITLE' => $item_name_full,
 				'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
 				'THANKS_LIST' => thanks_render_user('thanks.user', Cot::$cfg['plugin']['thanks']['thanksperpage'], '', 'th_ext = "' . $ext . '" and th_item = ' . $item, '', 'page', 'thanks_ajax'),
 				'THANKS_BACK' => (isset($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : "",
-			));
+			]);
 			$out['subtitle'] = $out['desc'] = $L['thanks_title_' . $ext] . " ID #" . $item;
 		} else {
 			thanks_wrong_parameter();
@@ -165,11 +175,11 @@ if ($a == 'thank' && !empty($ext) && (int)$item > 0) {
 } elseif (!$a) {
 	$t = new XTemplate(cot_tplfile('thanks', 'plug'));
 	$crumbs[] = Cot::$L['thanks_title_short'];
-	$t->assign(array(
+	$t->assign([
   	'THANKS_CLASS' => $R['thanks_class_list'],
   	'THANKS_TITLE' => $L['thanks_title'],
   	'THANKS_BREADCRUMBS' => cot_breadcrumbs($crumbs, Cot::$cfg['homebreadcrumb']),
   	'THANKS_LIST' => thanks_render_list('thanks.list', Cot::$cfg['plugin']['thanks']['usersperpage'], '', '', '', 'page', 'thanks_ajax'),
-	));
+	]);
 	cot_display_messages($t);
 }

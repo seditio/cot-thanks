@@ -22,7 +22,9 @@ $R['thanks_quote_close'] = '&raquo;';
 
 $R['thanks_class_list'] = '';
 
-$R['pm_message']   = '{$intro} <br /> <a href="{$link}">' . $L['ReadMore'] . '</a>';
+$R['thanks_pm_notification']   = '{$intro} <br /> <a href="{$link}">' . $L['ReadMore'] . '</a>';
+$R['thanks_email_notification']   = '{$intro}
+{$link}';
 
 if (cot_plugin_active('icons')) {
   $R['more_back']   = '<a href="{$link}" class="btn btn-sm btn-secondary">' . $R['icon-arrow-right'] . '<span>' . $L['ReadMore'] . '</span></a>';

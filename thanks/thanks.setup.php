@@ -38,22 +38,25 @@ encrypt_iv=17:string::1234567890123456:Initialization Vector
 
 page=20:separator:::
 page_on=21:radio::1:Turn on thanks for pages
-page_class=23:string::btn btn-primary d-block mb-4: Class attribute for page thanks link
+page_class=23:string::btn btn-primary d-block mb-4:Class attribute for page thanks link
 
 forums=30:separator:::
 forums_on=31:radio::1:Turn on thanks for forums (posts)
-forums_class=32:string::: Class attribute for post thanks link
+forums_class=32:string:::Class attribute for post thanks link
 
 comments=40:separator:::
 comments_on=41:radio::1:Turn on thanks for comments
-comments_class=42:string::: Class attribute for comment thanks link
+comments_class=42:string:::Class attribute for comment thanks link
 comments_order=43:radio::0:Sort comments by thanks
 
-misc=50:separator:::
-short=51:radio::0: Short string - only user name, no date stamp
-page_on_result=52:radio::0: Display page after thanks or simply redirect to referer
-notify_pm=53:radio::0: Notify to PM on new a new like
-notify_email=54:radio::0: Notify to email on new a new like
+notifications=50:separator:::
+notify_from=51:string::noreply@site.tpl:Email to send notifications to
+notify_by_email=52:radio::0:Notify to email on new a new like
+notify_by_pm=53:radio::0:Notify to PM on new a new like
+
+misc=60:separator:::
+short=61:radio::0:Short string - only user name, no date stamp
+page_on_result=62:radio::0:Display page after thanks or simply redirect to referer
 
 [END_COT_EXT_CONFIG]
 ==================== */

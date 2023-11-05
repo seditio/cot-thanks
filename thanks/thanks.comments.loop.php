@@ -69,7 +69,7 @@ if (Cot::$cfg['plugin']['thanks']['comments_on']) {
 		$t->assign(array(
 			$prefix . 'THANKS_CAN'  => true,
 			$prefix . 'THANKS_URL'  => $thanks_url,
-			$prefix . 'THANKS_LINK' => cot_rc_link($thanks_url, $L['thanks_thanks'], array('class' => Cot::$cfg['plugin']['thanks'][$ext . '_class'])),
+			$prefix . 'THANKS_LINK' => cot_rc_link($thanks_url, $L['thanks_thanks'], array('rel' => 'nofollow', 'class' => Cot::$cfg['plugin']['thanks'][$ext . '_class'])),
 		));
 	} else {
 		$t->assign(array(
