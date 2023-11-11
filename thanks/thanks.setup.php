@@ -39,6 +39,7 @@ encrypt_iv=17:string::1234567890123456:Initialization Vector
 page=20:separator:::
 page_on=21:radio::1:Turn on thanks for pages
 page_class=23:string::btn btn-primary d-block mb-4:Class attribute for page thanks link
+page_list=24:radio::0:Generate tags for page lists
 
 forums=30:separator:::
 forums_on=31:radio::1:Turn on thanks for forums (posts)
